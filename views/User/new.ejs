@@ -1,0 +1,46 @@
+<div class="container-fluid">
+    <div class="row">
+        <div class="col-md-1"></div>
+        <div class="col-md-6 border-box">
+            <h1 class="lb">Create New Account</h1>
+
+            <% if(flash && flash.err) { %>
+                <ul class="alert alert-warning">
+                    <% Object.keys(flash.err).forEach(function(error){ %>
+                    <li><%- JSON.stringify(flash.err[error]) %></li>
+                    <% }); %>
+                </ul>
+                <% }%>
+
+            <form action="/user/create" method="post">
+                <div class="form-group">
+                    <label for="fname">First name</label>
+                    <input type="text" class="form-control" id="fname" placeholder="First name" name="firstName">
+                </div>
+                <div class="form-group">
+                    <label for="lname">Last name</label>
+                    <input type="text" class="form-control" id="lname" placeholder="Last name" name="lastName">
+                </div>
+                <div class="form-group">
+                    <label for="email">Email address</label>
+
+                    <div class="input-group">
+                        <div class="input-group-addon">@</div>
+                        <input type="email" class="form-control" id="email" placeholder="Email" name="email">
+                    </div>
+                </div>
+                <div class="form-group">
+                    <label for="exampleInputPassword1">Password</label>
+                    <input type="password" class="form-control" id="exampleInputPassword1" placeholder="Password" name="password">
+                </div>
+                <div class="form-group">
+                    <label for="exampleInputPassword2">Password (again)</label>
+                    <input type="password" class="form-control" id="exampleInputPassword2" placeholder="Password (again)" name="confirmation">
+                </div>
+                <button type="submit" class="btn btn-lg btn-primary">Submit</button>
+                <input type="hidden" name="_csrf" value="<%= _csrf %>"/>
+            </form>
+        </div>
+    </div>
+</div>
+

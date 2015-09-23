@@ -1,3 +1,3 @@
-# stella
+# xploLearn
 
 a [Sails](http://sailsjs.org) application

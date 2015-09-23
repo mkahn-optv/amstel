@@ -1,0 +1,26 @@
+@nice-blue: #5B83AD;
+@light-blue: @nice-blue + #111;
+@stock-radius: 5px;
+
+.lb {
+  color: @light-blue;
+}
+
+.border-box {
+  border: 2px solid @light-blue;
+  border-radius: @stock-radius;
+  padding: 10px;
+}
+
+.backdrop {
+  position: fixed;
+  top: 0;
+  left: 0;
+  width: 100%;
+  height: 100%;
+  z-index: -10;
+  img {
+    width: 100%;
+    height: 100%;
+  }
+}
