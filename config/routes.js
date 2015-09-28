@@ -41,7 +41,7 @@ module.exports.routes = {
 
     '/setup/clear': 'SetupController.clear',
 
-    '/': { view: 'static/parking' }
+    '/': { view: 'static/index' }
 
     /***************************************************************************
      *                                                                          *

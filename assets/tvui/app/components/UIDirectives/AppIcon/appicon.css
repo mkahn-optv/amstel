@@ -1,0 +1,65 @@
+app-icon {
+    display: inline-block;
+    -webkit-transition: all 0.25s ease-in-out;
+    -moz-transition: all 0.25s ease-in-out;
+    -o-transition: all 0.25s ease-in-out;
+    transition: all 0.25s ease-in-out;
+}
+
+.app-icon-frame {
+    width: 320px;
+    height: 180px;
+    position: relative;
+    margin: 20px;
+    border-radius: 10px;
+    aaborder: 5px solid #484848;
+}
+
+.selected {
+    border: 8px solid #dfdfdf;
+}
+
+.not-selected {
+    border: 8px solid transparent;
+}
+
+.app-icon-frame .app-icon-label {
+    color: white;
+    background-color: #303030;
+    font-size: 30px;
+    overflow: hidden;
+    text-align: center;
+    width: 90%;
+    padding: 8px;
+    margin-top: 20px;
+    margin-left: auto;
+    margin-right: auto;
+    border-radius: 5px;
+}
+
+.app-icon-frame img {
+    margin-left: auto;
+    margin-right: auto;
+    margin-top: 5px;
+    display: block;
+    height: 170px;
+    width: 300px;
+    border-radius: 15px;
+
+}
+
+.icon-holder {
+    position: relative;
+    top: 200px;
+    margin-left: 40px;
+    margin-right: auto;
+
+}
+
+.hide-icon {
+
+    /*transform: translate(-2000px, 0);
+    -webkit-transform: translate(-2000px, 0);*/
+    transform: scale(0, 0);
+    -webkit-transform: scale(0, 0);
+}
