@@ -30,6 +30,13 @@ module.exports = {
             type: 'string'
         },
 
+        accountType: {
+            type: 'string',
+            enum: [ 'optv', 'admin', 'patron', 'dev', 'partner'],
+            defaultsTo: 'patron', //lowest level
+            required: true
+        },
+
         toJSON: function () {
             var obj = this.toObject();
             delete obj.encryptedPassword;

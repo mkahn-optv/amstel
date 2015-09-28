@@ -31,6 +31,7 @@
     <!--STYLES-->
     <link rel="stylesheet" href="/styles/bootstrap.min.css">
     <link rel="stylesheet" href="/styles/importer.css">
+    <link rel="stylesheet" href="/styles/style.css">
     <!--STYLES END-->
 </head>
 
@@ -48,7 +49,7 @@
 <% } %>
 
 <% if (!session.authenticated) {%>
-<div class="backdrop"><img src="/images/sportsbar.jpg"/></div>
+<div class="bkg"><img src="/images/sportsbarblur.jpg"/></div>
 <% } %>
 <%- body %>
 
@@ -104,10 +105,9 @@
 
 <!--SCRIPTS-->
 <script src="/js/dependencies/sails.io.js"></script>
+<script src="/js/dependencies/angular.min.js"></script>
+<script src="/js/bert.js"></script>
 <!--SCRIPTS END-->
-<footer>
-    <hr>
-    <p>(c)2015 OverplayTV</p>
-</footer>
+
 </body>
 </html>

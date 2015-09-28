@@ -13,10 +13,8 @@ module.exports = {
     setupOrLogin: function (req, res, next) {
 
         if (conf.get('firstTime')) {
-
-            res.view('static/index');
+            res.view('static/parking');
         } else {
-
             res.view('session/login');
         }
 
