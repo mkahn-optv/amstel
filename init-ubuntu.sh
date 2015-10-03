@@ -14,16 +14,16 @@ AMSTEL_DIR=/opt/amstel/
 
 case "$1" in
  start)
-   su mkahn -c AMSTEL_DIR/startup.sh
+   su mkahn -c $AMSTEL_DIR/startup.sh
    ;;
  stop)
-   su joe -c AMSTEL_DIR/startup.sh
+   su joe -c $AMSTEL_DIR/startup.sh
    sleep 10
    ;;
  restart)
-   su joe -c AMSTEL_DIR/shutdown.sh
+   su joe -c $AMSTEL_DIR/shutdown.sh
    sleep 20
-   su joe -c AMSTEL_DIR/startup.sh
+   su joe -c $AMSTEL_DIR/startup.sh
    ;;
  *)
    echo "Usage: amstel {start|stop|restart}" >&2
