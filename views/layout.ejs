@@ -27,7 +27,7 @@
             + Import stylesheets from other directories
             + Use a different or additional preprocessor, like SASS, SCSS or Stylus
     -->
-
+    <link href='https://fonts.googleapis.com/css?family=Dosis:400,600,700' rel='stylesheet' type='text/css'>
     <!--STYLES-->
     <link rel="stylesheet" href="/styles/bootstrap.min.css">
     <link rel="stylesheet" href="/styles/importer.css">
@@ -48,7 +48,7 @@
 </nav>
 <% } %>
 
-<% if (!session.authenticated) {%>
+<% if (!session.authenticated) { %>
 <div class="bkg"><img src="/images/sportsbarblur.jpg"/></div>
 <% } %>
 <%- body %>
