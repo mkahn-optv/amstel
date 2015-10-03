@@ -1,7 +1,7 @@
 /**
 * AppData.js
 *
-* @description :: TODO: You might write a short summary of how this model works and what it represents here.
+* @description :: Per app JSON store
 * @docs        :: http://sailsjs.org/#!documentation/models
 */
 
@@ -14,7 +14,7 @@ module.exports = {
       defaultsTo: {}
     },
 
-    app: {
+    appName: {
       type: 'string',
       required: true
     }

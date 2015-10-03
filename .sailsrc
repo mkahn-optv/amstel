@@ -1,5 +1,9 @@
 {
   "generators": {
     "modules": {}
+  },
+
+  "printing": {
+    "tracker": "from sailsrc"
   }
 }

@@ -9,9 +9,39 @@
  * http://sailsjs.org/#/documentation/reference/sails.config/sails.config.bootstrap.html
  */
 
-module.exports.bootstrap = function(cb) {
+var util = require('util');
 
-  // It's very important to trigger this callback method when you are finished
-  // with the bootstrap!  (otherwise your server will never lift, since it's waiting on the bootstrap)
-  cb();
+module.exports.bootstrap = function (cb) {
+
+
+    function installStockApps() {
+
+        var stockApps = sails.config.stockapps && sails.config.stockapps.apps;
+        //sails.log.debug(util.inspect(stockApps));
+
+        if ( Array.isArray(stockApps) ) {
+            stockApps.forEach(function (app) {
+
+                Apps.create(app)
+                    .then(function (a) {
+                              sails.log.debug("Attempt to install " + app.reverseDomainName + " yielded: " + a);
+
+                          })
+                    .catch(function (e) {
+                               sails.log.silly("Error on attempt to install " + app.reverseDomainName + " yielded: " + e);
+
+                           });
+
+            });
+
+        }
+
+
+    }
+
+    installStockApps();
+
+    // It's very important to trigger this callback method when you are finished
+    // with the bootstrap!  (otherwise your server will never lift, since it's waiting on the bootstrap)
+    cb();
 };

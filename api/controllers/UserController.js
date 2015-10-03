@@ -8,6 +8,7 @@
 module.exports = {
 
     'new': function (req, res) {
+        console.log("Tracker: "+sails.config.printing.tracker);
         res.view();
     },
 

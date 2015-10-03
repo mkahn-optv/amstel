@@ -1,61 +1,70 @@
 /**
-* Apps.js
-*
-* @description :: Entry per app installed
-* @docs        :: http://sailsjs.org/#!documentation/models
-*/
+ * Apps.js
+ *
+ * @description :: Entry per app installed
+ * @docs        :: http://sailsjs.org/#!documentation/models
+ */
 
 module.exports = {
 
-  schema: true,
+    schema: true,
 
-  attributes: {
+    attributes: {
 
-    name: {
-      type: "string",
-      required: true
-    },
+        appType: {
+            type: "string"//,
+            //enum: [ "partial", "fullscreen"]
+        },
 
-    reverseDomainName: {
-      type: "string",
-      required: true
-    },
+        name: {
+            type: "string",
+            required: true
+        },
 
-    buildNumber: {
-      type: "integer",
-      required: true,
-      defaultsTo: 0
-    },
+        reverseDomainName: {
+            type: "string",
+            required: true,
+            unique: true
+        },
 
-    signature: {
-      type: "string",
-      required: true
-    },
+        buildNumber: {
+            type: "integer",
+            required: true,
+            defaultsTo: 0
+        },
 
-    iconLabel: {
-      type: "string",
-      required: true
-    },
+        signature: {
+            type: "string",
+            required: false
+        },
 
-    iconImage512: {
-      type: "binary",
-      required: true
-    },
+        iconLabel: {
+            type: "string",
+            required: false
+        },
 
-    iconImage128: {
-      type: "binary",
-      required: true
-    },
+        iconLauncher: {
+            type: "string",
+            required: false
+        },
 
-    iconImage64: {
-      type: "binary",
-      required: true
-    },
 
-    show: {
-      type: "boolean",
-      defaultsTo: true
+        onLauncher: {
+            type: "boolean",
+            defaultsTo: true
+        },
+
+        publisher: {
+            type: 'string'
+        },
+
+        toJSON: function () {
+
+            var app = this.toObject();
+            app.launcherIconPath = '/opkg/' + app.reverseDomainName + '/assets/icons/' + app.iconLauncher;
+            return app;
+
+        }
     }
-  }
 };
 
