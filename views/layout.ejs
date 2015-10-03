@@ -36,6 +36,7 @@
 </head>
 
 <body>
+
 <% if (session.authenticated) { %>
 <nav class="navbar navbar-default">
     <div class="container-fluid">
@@ -48,9 +49,11 @@
 </nav>
 <% } %>
 
+
 <% if (!session.authenticated) { %>
-<div class="bkg"><img src="/images/sportsbarblur.jpg"/></div>
+<div class="bkg tlfix"><img src="/images/sportsbarblur.jpg"/></div>
 <% } %>
+
 <%- body %>
 
 
