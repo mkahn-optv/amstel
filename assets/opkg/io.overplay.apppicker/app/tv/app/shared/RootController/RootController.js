@@ -54,18 +54,18 @@ app.controller("rootController", function ($scope, $timeout, $location, $log, $r
 
                 case 'left':
                     _selectedIcon--;
-                    if (_selectedIcon < 0) _selectedIcon = $scope.iconList.length - 1;
+                    if (_selectedIcon < 0) _selectedIcon = $scope.apps.length - 1;
                     break;
 
                 case 'right':
                     _selectedIcon++;
-                    if (_selectedIcon == $scope.iconList.length) _selectedIcon = 0;
+                    if (_selectedIcon == $scope.apps.length) _selectedIcon = 0;
                     break;
 
                 case 'center':
-                    $log.info("Center pushed. Go to: " + $scope.iconList[_selectedIcon].target);
+                    $log.info("Center pushed. Go to: " + $scope.apps[_selectedIcon].reverseDomainName);
                     toggleUI();
-                    $location.path($scope.iconList[_selectedIcon].target);
+                    $scope.clicked($scope.apps[_selectedIcon]);
                     break;
 
                 case 'cpanel':
