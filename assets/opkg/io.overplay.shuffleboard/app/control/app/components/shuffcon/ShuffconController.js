@@ -17,7 +17,7 @@ app.controller("shuffconController",
 
                        optvModel.init({
                            appName: "io.overplay.shuffleboard",
-                           initialValue: {red: 0, blue: 0},
+                           initialValue: {red: 0, blue: 0, toTV: undefined },
                            autoSync: true
                        })
                            .then(ready);
@@ -45,6 +45,11 @@ app.controller("shuffconController",
                        optvModel.model.blue = 0;
                        optvModel.save();
 
+                   }
+
+                   $scope.home = function () {
+                        optvModel.model['toTV'] = "home";
+                        optvModel.save();
                    }
 
 

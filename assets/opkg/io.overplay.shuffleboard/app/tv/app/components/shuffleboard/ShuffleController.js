@@ -3,7 +3,7 @@
  */
 
 app.controller("shuffleController",
-               function ($scope, $timeout, $http, $interval, optvModel, $log) {
+               function ($scope, $timeout, $http, $interval, optvModel, $log, $window) {
 
                    console.log("Loading shuffleController");
 
@@ -48,6 +48,12 @@ app.controller("shuffleController",
                        $log.debug("Model update callback...")
                        _remoteScore = data;
                        updateLocalScore();
+                       if (data.toTV == "home") {
+                           $log.info("Showing main UI");
+                           optvModel.model.toTV = "";
+                           optvModel.save();
+                           $window.location.href = "/opkg/io.overplay.apppicker/app/tv/index.html";
+                       }
                    }
 
                    function updateFromRemote() {
@@ -56,7 +62,7 @@ app.controller("shuffleController",
                            appName: "io.overplay.shuffleboard",
                            refreshInterval: 1000,
                            refreshCallback: modelUpdate,
-                           initialValue: {red: 0, blue: 0},
+                           initialValue: {red: 0, blue: 0, toTV: undefined},
                            autoSync: false
                        })
                            .then(modelUpdate);
