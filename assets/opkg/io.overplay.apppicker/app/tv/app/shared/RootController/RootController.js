@@ -6,7 +6,7 @@
  */
 
 
-app.controller("rootController", function ($scope, $timeout, $location, $log, $rootScope, $http, $window) {
+app.controller("rootController", function ($scope, $timeout, $location, $log, $rootScope, $http, $window, optvModel) {
 
     console.log("Loading rootController");
 
@@ -164,8 +164,22 @@ app.controller("rootController", function ($scope, $timeout, $location, $log, $r
 
     $scope.clicked = function (app) {
         $log.info("Clicked on: " + app.reverseDomainName);
-        $window.location.href = "/opkg/"+app.reverseDomainName+"/app/tv/index.html";
+        //$window.location.href = "/opkg/"+app.reverseDomainName+"/app/tv/index.html";
+        optvModel.postMessage({ to: "io.overplay.mainframe", data: { launch: app }});
     }
+
+    function inboundMessage(msg){
+        $log.info("Inbound message..to APPPICKER");
+        $log.info(JSON.stringify(msg));
+    }
+
+    optvModel.init({
+            appName: "io.overplay.apppicker",
+            refreshInterval: 1000,
+            messageCallback: inboundMessage,
+            initialValue: {},
+            autoSync: false
+        });
 
 
 });

@@ -1,5 +1,5 @@
 <!DOCTYPE html>
-<html ng-app="optvUIApp">
+<html ng-app="optvMainFrameApp">
 <head lang="en">
   <meta charset="UTF-8">
 
@@ -16,16 +16,12 @@
 
 
   <!-- App Main and AngularJS Routes -->
-  <script src="app/optvUIApp.module.js"></script>
-  <script src="app/optvUIApp.routes.js"></script>
+  <script src="app/optvMainFrameApp.module.js"></script>
+  <script src="app/optvMainFrameApp.routes.js"></script>
   <script src="/js/optvAPI/optvAPI.js"></script>
 
   <!-- Controllers -->
   <script src="app/shared/RootController/RootController.js"></script>
-
-
-  <!-- Directives -->
-  <script src="app/components/UIDirectives/AppIcon/appicon.directive.js"></script>
 
 
   <link href="assets/bower_components/animate.css/animate.css" rel="stylesheet">
@@ -33,7 +29,6 @@
 
   <!--<link href="assets/css/style.css" rel="stylesheet">-->
   <link href="assets/bower_components/angular-toastr/dist/angular-toastr.css" rel="stylesheet">
-  <link href='http://fonts.googleapis.com/css?family=Dosis:300,400' rel='stylesheet' type='text/css'>
 
 
   <!-- App Specific and Overridden CSS -->
@@ -45,29 +40,18 @@
   <title>OPTV Demo</title>
 </head>
 
-<body ng-controller="rootController" ng-keypress="keyPressed($event)" id="docbody" ng-click="toggleUI()">
+<body ng-controller="rootController" ng-keypress="keyPressed($event)" id="docbody" ng-click="keyPressed('center')">
 
+<!-- array of launched apps -->
+<iframe ng-repeat="app in runningApps" src="{{app.src}}"
+        ng-style="{ 'top': app.currentFrame.top, 'left': app.currentFrame.left,
+      'width': app.currentFrame.width, 'height': app.currentFrame.height }"
+        class="app-iframe" ng-hide="app.hide"></iframe>
 
-<div ng-class="{ notup: hideUI }" class="ui-holder">
-  <!--<div class="bkg" ng-class="{ op0: hideUI }"><img src="assets/img/screen1x.png"/></div>-->
-  <div class="app-banner">
-    <img src="assets/img/optvlogo.png"/>
+<!-- Launcher -->
+<iframe src="{{launcher.src}}" ng-style="{ 'top': launcher.currentFrame.top, 'left': launcher.currentFrame.left,
+      'width': launcher.currentFrame.width, 'height': launcher.currentFrame.height }"
+        class="app-iframe" ng-hide="launcher.hide"></iframe>
 
-    <h2>Overplay TV</h2></div>
-</div>
-<!--
-<app-icon icon-src="assets/img/shuffle-app.png" app-name="Shufflz"></app-icon>
-<app-icon icon-src="assets/img/biggame-app.png" app-name="Big Ho"></app-icon>
--->
-<div class="icon-holder">
-
-  <app-icon ng-repeat="a in apps" icon-src="{{a.launcherIconPath}}" app-name="{{a.name}}"
-            selected="isSelected($index)"
-            ng-click="clicked(a)"
-            ng-class="{ 'hide-icon' : shouldHide($index) }"></app-icon>
-
-</div>
-
-<div ng-view ng-show="hideUI"></div>
 </body>
 </html>

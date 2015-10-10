@@ -54,8 +54,28 @@ module.exports = {
             defaultsTo: true
         },
 
+        isMain: {
+            type: "boolean",
+            defaultsTo: false
+        },
+
         publisher: {
             type: 'string'
+        },
+
+        initialFrame: {
+            type: 'json',
+            defaultsTo: { "top": "50px", "left": "50px", "width": "300px", "height": "300px" }
+        },
+
+        currentFrame: {
+            type: 'json',
+            defaultsTo: { "top": "50px", "left": "50px", "width": "300px", "height": "300px" }
+        },
+
+        lastUsed: {
+            type: "integer",
+            defaultsTo: 0
         },
 
         toJSON: function () {

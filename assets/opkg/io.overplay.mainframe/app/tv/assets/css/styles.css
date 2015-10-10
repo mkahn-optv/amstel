@@ -1,0 +1,27 @@
+@font-face {
+    font-family: "Dosis";
+    src: url('../fonts/Dosis-Regular.ttf');
+}
+
+@font-face {
+    font-family: "Dosis-Bold";
+    src: url('../fonts/Dosis-ExtraBold.ttf');
+}
+
+html {
+    margin: 0;
+    aabackground-color: #F000F0;
+
+}
+
+body {
+    margin: 0;
+    aabackground-color: #8ef058;
+    font-family: 'Dosis', sans-serif;
+
+}
+
+.app-iframe {
+    position: fixed;
+    border: 0px;
+}

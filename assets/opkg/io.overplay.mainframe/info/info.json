@@ -1,0 +1,11 @@
+{
+  "appType": "mainframe",
+  "name": "Launcher",
+  "reverseDomainName": "io.overplay.mainframe",
+  "buildNumber": 1,
+  "signature": "",
+  "iconLabel": "",
+  "iconImageLarge": "",
+  "publisher": "Overplay TV, Inc.",
+  "show": false
+}
