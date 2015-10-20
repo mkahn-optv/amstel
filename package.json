@@ -7,7 +7,6 @@
   "dependencies": {
     "bcrypt": "^0.8.5",
     "bluebird": "^2.10.2",
-    "configstore": "^1.2.1",
     "ejs": "~0.8.4",
     "grunt": "0.4.2",
     "grunt-contrib-clean": "~0.5.0",

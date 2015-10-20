@@ -20,7 +20,6 @@
  * http://sailsjs.org/#/documentation/concepts/Routes/RouteTargetSyntax.html
  */
 
-var conf = require('configstore')
 
 module.exports.routes = {
 

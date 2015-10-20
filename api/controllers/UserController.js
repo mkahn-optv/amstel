@@ -25,9 +25,9 @@ module.exports = {
             req.session.authenticated = true;
             req.session.user = user;
 
-            var Configstore = require('configstore');
-            var conf = new Configstore('opconf');
-            conf.set('firstTime', false);
+            //var Configstore = require('configstore');
+            //var conf = new Configstore('opconf');
+            //conf.set('firstTime', false);
 
             res.redirect('/user/show/' + user.id);
 
