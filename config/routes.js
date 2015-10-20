@@ -41,7 +41,10 @@ module.exports.routes = {
 
     '/setup/clear': 'SetupController.clear',
 
-    '/': { view: 'static/index' }
+    '/': { view: 'static/index' },
+
+    'get /api/v1/systemstate': 'SystemController.systemState',
+    'post /api/v1/setrunning': 'SystemController.setRunning'
 
     /***************************************************************************
      *                                                                          *

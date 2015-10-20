@@ -65,12 +65,12 @@ module.exports = {
 
         initialFrame: {
             type: 'json',
-            defaultsTo: { "top": "50px", "left": "50px", "width": "300px", "height": "300px" }
+            defaultsTo: { "top": "5vh", "left": "3vw", "width": "15vw", "height": "30vh" }
         },
 
         currentFrame: {
             type: 'json',
-            defaultsTo: { "top": "50px", "left": "50px", "width": "300px", "height": "300px" }
+            defaultsTo: { "top": "5vh", "left": "3vw", "width": "15vw", "height": "30vh" }
         },
 
         lastUsed: {

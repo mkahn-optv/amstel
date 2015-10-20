@@ -21,7 +21,7 @@
   <script src="/js/optvAPI/optvAPI.js"></script>
 
   <!-- Controllers -->
-  <script src="app/shared/RootController/RootController.js"></script>
+  <script src="app/shared/MainFrameController/MainFrameController.js"></script>
 
 
   <link href="assets/bower_components/animate.css/animate.css" rel="stylesheet">
@@ -40,18 +40,22 @@
   <title>OPTV Demo</title>
 </head>
 
-<body ng-controller="rootController" ng-keypress="keyPressed($event)" id="docbody" ng-click="keyPressed('center')">
-
+<body ng-controller="mainFrameController" ng-keypress="keyPressed($event)" id="docbody" ng-click="keyPressed('center')">
 <!-- array of launched apps -->
-<iframe ng-repeat="app in runningApps" src="{{app.src}}"
+<iframe ng-repeat="app in widgetApps" src="{{app.src}}"
         ng-style="{ 'top': app.currentFrame.top, 'left': app.currentFrame.left,
       'width': app.currentFrame.width, 'height': app.currentFrame.height }"
-        class="app-iframe" ng-hide="app.hide"></iframe>
+        class="app-iframe hide-fade" ng-show="app.show"></iframe>
+
+<iframe ng-repeat="app in crawlerApps" src="{{app.src}}"
+        ng-style="{ 'top': app.currentFrame.top, 'left': app.currentFrame.left,
+      'width': app.currentFrame.width, 'height': app.currentFrame.height }"
+        class="app-iframe hide-fade" ng-show="app.show"></iframe>
 
 <!-- Launcher -->
 <iframe src="{{launcher.src}}" ng-style="{ 'top': launcher.currentFrame.top, 'left': launcher.currentFrame.left,
       'width': launcher.currentFrame.width, 'height': launcher.currentFrame.height }"
-        class="app-iframe" ng-hide="launcher.hide"></iframe>
+        class="launcher-iframe" ng-class="{'launcher-offscreen': !uiState.showAppPicker}"></iframe>
 
 </body>
 </html>

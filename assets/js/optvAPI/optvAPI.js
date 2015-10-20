@@ -1,7 +1,16 @@
-/**
- *
- *
- */
+/*********************************
+
+ File:       optvAPI.js
+ Function:   Provides an angular service wrapper for inter-app communication
+ Copyright:  Overplay TV
+ Date:       10/14/15 5:16 PM
+ Author:     mkahn
+
+ This is a preliminary version of an inter-app communications module (Angular Factory). Ultimately, we will use socketio
+ for better performance. For now, we use polling.
+
+ **********************************/
+
 
 angular.module('ngOpTVApi', [])
     .factory('optvModel', function ($http, $log, $interval, $rootScope) {
@@ -13,12 +22,23 @@ angular.module('ngOpTVApi', [])
 
                  //Callback for AppData updates
                  var _dataCb;
+
                  //Callback for new Message updates
                  var _msgCb;
-                 var _autoSync;
+
                  var _appName;
                  var _dbId;
                  var _initialValue;
+
+                 function writeData(outboundData) {
+
+                     return $http.post('/api/v1/AppData', {appName: _appName, data: outboundData})
+                         .then(function (data) {
+                                   _dbId = data.data.id;
+                                   return data.data.data;
+                               });
+
+                 }
 
                  service.loadModel = function () {
 
@@ -27,20 +47,17 @@ angular.module('ngOpTVApi', [])
 
                                    if (data.data.data) {
 
-                                       $log.debug("optvModel: model has existing data.");
+                                       //$log.debug("optvModel: model has existing data.");
                                        service.model = data.data.data; // no nice, we named it thrice
-                                       _dbId = data.data.id;
+                                       _dbId = data.data.id; // id of the single data entry for this app
                                        return service.model;
 
-                                   } else if (!_initialValue) {
-                                       return {};
                                    } else {
 
-                                       return $http.post('/api/v1/AppData', {appName: _appName, data: _initialValue})
-                                           .then(function (data) {
-                                                     _dbId = data.data.id;
-                                                     return _initialValue;
-                                                 })
+                                       // There is no data already in the DB, so let's create an entry with the default
+                                       // data, or nothing if that is what the user did(nt) provide
+
+                                       return writeData(_initialValue);
 
                                    }
 
@@ -51,15 +68,12 @@ angular.module('ngOpTVApi', [])
 
                  service.loadMessages = function () {
 
-                     return $http.get('/api/v1/message?to=' + _appName + '&sort=created ASC')
+                     return $http.get('/api/v1/message/popTo?to=' + _appName)
                          .then(function (data) {
 
+                                   //This is here for debugging
                                    if (data.data.length > 0) {
                                        $log.info("New messages received. Length: " + data.data.length);
-                                       //Remove rx'd messages
-                                       data.data.forEach(function (d) {
-                                           $http.delete('/api/v1/message/' + d.id);
-                                       });
                                    }
 
                                    return data.data;
@@ -72,11 +86,12 @@ angular.module('ngOpTVApi', [])
                  service.init = function (params) {
 
                      _appName = params.appName;
-                     _refreshInterval = params.refreshInterval || 0;
+                     _refreshInterval = params.refreshInterval || 10000; //if you don't care enough to set it, you get 10s
                      _dataCb = params.dataCallback;
                      _msgCb = params.messageCallback;
-                     _initialValue = params.initialValue;
+                     _initialValue = params.initialValue || {};
 
+                     //If there are either kind of callback defined, then setup the callback looper
                      if (_refreshInterval && (_dataCb || _msgCb )) {
                          _refreshMachine = $interval(function () {
                              if (_dataCb)
@@ -95,7 +110,7 @@ angular.module('ngOpTVApi', [])
 
                  }
 
-
+                 //TODO this is replicated from the method above, should be cleaner up
                  service.save = function () {
 
                      return $http.put('/api/v1/AppData/' + _dbId, {data: service.model, appName: _appName});

@@ -48,8 +48,9 @@ app.controller("shuffconController",
                    }
 
                    $scope.home = function () {
-                        optvModel.model['toTV'] = "home";
-                        optvModel.save();
+
+                        optvModel.postMessage({ to:"io.overplay.mainframe", data: { dash: 'toggle' }});
+
                    }
 
 

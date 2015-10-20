@@ -32,7 +32,6 @@
 .media-holder p {
     text-align: center;
 }
-
 app-icon {
     display: inline-block;
     -webkit-transition: all 0.25s ease-in-out;

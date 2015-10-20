@@ -39,35 +39,26 @@
   <!-- App Specific and Overridden CSS -->
   <!--<link href="assets/css/style.css" rel="stylesheet">-->
   <link href="assets/css/styles.css" rel="stylesheet">
-  <link href="assets/css/compiled-styles.css" rel="stylesheet">
 
 
-  <title>OPTV Demo</title>
+  <title>OPTV App Picker</title>
 </head>
 
 <body ng-controller="rootController" ng-keypress="keyPressed($event)" id="docbody" ng-click="toggleUI()">
 
 
-<div ng-class="{ notup: hideUI }" class="ui-holder">
-  <!--<div class="bkg" ng-class="{ op0: hideUI }"><img src="assets/img/screen1x.png"/></div>-->
-  <div class="app-banner">
-    <img src="assets/img/optvlogo.png"/>
+<div class="icon-tray">
 
-    <h2>Overplay TV</h2></div>
-</div>
-<!--
-<app-icon icon-src="assets/img/shuffle-app.png" app-name="Shufflz"></app-icon>
-<app-icon icon-src="assets/img/biggame-app.png" app-name="Big Ho"></app-icon>
--->
-<div class="icon-holder">
+  <div class="logo">Overplay TV</div>
+  <div class="icon-scroller">
+    <app-icon ng-repeat="a in apps" icon-src="{{a.launcherIconPath}}" app-name="{{a.name}}"
+              selected="isSelected($index)"
+              ng-click="clicked(a)"
+              ></app-icon>
+  </div>
 
-  <app-icon ng-repeat="a in apps" icon-src="{{a.launcherIconPath}}" app-name="{{a.name}}"
-            selected="isSelected($index)"
-            ng-click="clicked(a)"
-            ng-class="{ 'hide-icon' : shouldHide($index) }"></app-icon>
 
 </div>
 
-<div ng-view ng-show="hideUI"></div>
 </body>
 </html>

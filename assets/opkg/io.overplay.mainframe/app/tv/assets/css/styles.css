@@ -8,6 +8,16 @@
     src: url('../fonts/Dosis-ExtraBold.ttf');
 }
 
+@font-face {
+    font-family: "Clean";
+    src: url('/styles/fonts/OpenSans-Light.ttf');
+}
+
+@font-face {
+    font-family: "Clean-Bold";
+    src: url('/styles/fonts/OpenSans-Bold.ttf');
+}
+
 html {
     margin: 0;
     aabackground-color: #F000F0;
@@ -17,11 +27,45 @@ html {
 body {
     margin: 0;
     aabackground-color: #8ef058;
-    font-family: 'Dosis', sans-serif;
+    font-family: 'Clean', sans-serif;
 
 }
 
 .app-iframe {
     position: fixed;
     border: 0px;
+    transition: top 1s ease, left 1s ease;
+    -webkit-transition: top 1s ease, left 1s ease;
+}
+
+.launcher-iframe {
+    position: fixed;
+    top: 0;
+    left: 0;
+    transition: left 1s linear;
+    -webkit-transition: left 0.5s linear;
+    border:0px;
+
+}
+
+.launcher-offscreen {
+    left: -50vw!important;
+}
+
+/* Here to insert borders for placement testing */
+.picker-iframe {
+    border: 0px dashed transparent;
+}
+
+.hide-fade {
+  -webkit-transition:opacity linear .3s;
+  -moz-transition:opacity linear .3s;
+  -o-transition:opacity linear .3s;
+  transition:opacity linear .3s;
+  display:block!important;
+  opacity: 1;
+}
+
+.hide-fade.ng-hide-add {
+  opacity:0;
 }
