@@ -55,8 +55,7 @@
 <!-- Launcher -->
 
 
-<iframe src="{{launcher.src}}" ng-style="{ 'top': launcher.currentFrame.top, 'left': launcher.currentFrame.left,
-      'width': launcher.currentFrame.width, 'height': launcher.currentFrame.height }"
+<iframe src="{{launcher.src}}"
         class="launcher-iframe" ng-class="{'launcher-offscreen': !uiState.showAppPicker}"></iframe>
 
 <div class="debugbox">{{windowDimension.text}}

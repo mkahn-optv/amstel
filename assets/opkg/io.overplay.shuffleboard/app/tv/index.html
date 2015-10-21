@@ -42,6 +42,7 @@
 
 <body ng-controller="rootController" ng-keypress="keyPressed($event)" id="docbody" ng-click="goLauncher()">
 
+<!-- flattish look
 <div class="applet" ng-controller="shuffleController">
   <div class="applet-banner">Overplay</div>
   <div class="score-box red"  ng-class="{ 'grow' : score.redHighlight }">
@@ -50,6 +51,18 @@
   <div class="score-box blue" ng-class="{ 'grow' : score.blueHighlight }">
     <div>{{score.blue}}</div>
   </div>
+  -->
+
+<!-- semis skeuomorph look -->
+<div class="applet" ng-controller="shuffleController">
+  <div class="applet-banner">Overplay</div>
+  <div class="score-box red-sk" ng-class="{ 'grow' : score.redHighlight }">
+    <div>{{score.red}}</div>
+  </div>
+  <div class="score-box blue-sk" ng-class="{ 'grow' : score.blueHighlight }">
+    <div>{{score.blue}}</div>
+  </div>
+
   <!--<img src="assets/img/optvlogo100.png"/>-->
 </div>
 

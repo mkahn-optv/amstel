@@ -31,12 +31,23 @@ body {
     color: white;
 }
 
+.red-sk {
+    background-image: url(../img/redbubble.png);
+    background-size: contain;
+    color: white;
+}
+
+.blue-sk {
+    background-image: url(../img/bluebubble.png);
+    background-size: contain;
+    color: white;
+}
+
 .applet {
     width: 40%;
     height: 60%;
-    background-color: #222;
     padding: 10px;
-    border-radius: 5px;
+    border-radius: 50px;
 }
 
 .applet-banner {
@@ -49,7 +60,8 @@ body {
     font-family: Dosis-Bold, sans-serif;
     text-align: center;
     font-size: 20px;
-    border-radius: 5px;
+    text-shadow: 2px 2px 2px rgb(101, 101, 101);
+    margin-bottom: 10px;
 }
 
 .score-box {
@@ -69,7 +81,7 @@ body {
 }
 
 .grow {
-    transform: scale(1.5, 1.5);
-    -webkit-transform: scale(1.5, 1.5);
-    opacity: 0.5;
+    transform: scale(1.2, 1.2);
+    -webkit-transform: scale(1.2, 1.2);
+    opacity: 0.8;
 }

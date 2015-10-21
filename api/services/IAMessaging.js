@@ -33,7 +33,7 @@ module.exports = {
 
         var rval = _messageMap[targetRDN];
         _messageMap[targetRDN] = [];
-        return rval;
+        return rval || [];
 
     },
 

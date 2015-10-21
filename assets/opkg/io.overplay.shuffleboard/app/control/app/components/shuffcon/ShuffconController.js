@@ -17,7 +17,7 @@ app.controller("shuffconController",
 
                        optvModel.init({
                            appName: "io.overplay.shuffleboard",
-                           initialValue: {red: 0, blue: 0, toTV: undefined },
+                           initialValue: {red: 0, blue: 0, toTV: undefined},
                            autoSync: true
                        })
                            .then(ready);
@@ -49,7 +49,13 @@ app.controller("shuffconController",
 
                    $scope.home = function () {
 
-                        optvModel.postMessage({ to:"io.overplay.mainframe", data: { dash: 'toggle' }});
+                       optvModel.postMessage({to: "io.overplay.mainframe", data: {dash: 'toggle'}});
+
+                   }
+
+                   $scope.move = function () {
+
+                       optvModel.postMessage({to: "io.overplay.mainframe", data:{ move:{ spot: "next", app:"io.overplay.shuffleboard" } }});
 
                    }
 

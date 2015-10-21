@@ -61,18 +61,6 @@ h1 {
     margin-left: 15%;
 }
 
-.red-sk {
-    border: 3px solid red;
-    color: white;
-    background-color: red;
-}
-
-.blue-sk {
-    border: 3px solid blue;
-    color: white;
-    background-color: blue;
-}
-
 .rd2 {
     color: white;
     background-color: #ea526f;
@@ -107,4 +95,36 @@ h1 {
     left: 0;
     bottom: 50px;
     width: 95%;
+}
+
+.app-button {
+    padding-top: 15px;
+    padding-bottom: 10px;
+    border-top: 1px solid #d3d1d1;
+}
+
+.app-button:last-of-type {
+    border-bottom: 1px solid #d3d1d1;
+}
+
+.app-icon-holder {
+    display: inline-block;
+    vertical-align: middle
+
+}
+
+.app-button img {
+
+    width: 120px;
+    margin-left: 10px;
+
+}
+
+.app-name {
+    font-size: 30px;
+    margin-left: 10px;
+    color: #b3b3b3;
+    display: inline-block;
+    vertical-align: middle
+
 }

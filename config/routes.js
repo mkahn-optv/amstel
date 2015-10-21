@@ -43,8 +43,9 @@ module.exports.routes = {
     '/': { view: 'static/index' },
 
     'get /api/v1/systemstate': 'SystemController.systemState',
-    'post /api/v1/setrunning': 'SystemController.setRunning'
+    'post /api/v1/setrunning': 'SystemController.setRunning',
 
+    'post /api/v1/postMessage': 'MessageController.postMessage'
     /***************************************************************************
      *                                                                          *
      * Custom routes here...                                                    *

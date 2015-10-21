@@ -21,10 +21,6 @@ app.controller("mainFrameController", function ($scope, $timeout, $location, $lo
     $scope.crawlerApps = [];
 
 
-    var widgetLocations = ['tl', 'tr', 'br', 'bl'];
-    var crawlerLocations = ['bottom', 'top'];
-
-
     $scope.keyPressed = function (event) {
 
         $log.info("Keyboard button pressed: " + event.which);
@@ -47,6 +43,11 @@ app.controller("mainFrameController", function ($scope, $timeout, $location, $lo
     function showAppPicker(shouldShow) {
 
         $scope.uiState.showAppPicker = shouldShow;
+
+        if (shouldShow){
+            $log.debug("Auto-dismissing app picker");
+            $timeout(function(){ showAppPicker(false); }, 6000*3);
+        }
     }
 
     function toggleAppPicker() {
@@ -95,35 +96,37 @@ app.controller("mainFrameController", function ($scope, $timeout, $location, $lo
      * Does the 'vw' style to 'px' mapping a modern browser would do for us, sigh...
      * @param pctg
      */
-    function convertToPx(pctg, val){
+    function convertToPx(pctg, val) {
 
-        var int = parseInt( pctg.replace(/v[w,h]/, ""));
-        return Math.floor( (int/100)*val )+"px";
+        var int = parseInt(pctg.replace(/v[w,h]/, ""));
+        return Math.floor((int / 100) * val) + "px";
     }
 
+    var widgetLocations = ['tl', 'tr', 'br', 'bl'];
+    var crawlerLocations = ['bottom', 'top'];
 
     function moveWidgetToSpot(app, spot) {
 
         switch (spot) {
 
             case 'tl':
-                app.currentFrame.top = .05*$scope.windowDimension.height+'px';
-                app.currentFrame.left = .03*$scope.windowDimension.width+'px';
+                app.currentFrame.top = .05 * $scope.windowDimension.height + 'px';
+                app.currentFrame.left = .03 * $scope.windowDimension.width + 'px';
                 break;
 
             case 'tr':
-                app.currentFrame.top = .05*$scope.windowDimension.height+'px';
-                app.currentFrame.left = .8*$scope.windowDimension.width+'px';
+                app.currentFrame.top = .05 * $scope.windowDimension.height + 'px';
+                app.currentFrame.left = .85 * $scope.windowDimension.width + 'px';
                 break;
 
             case 'bl':
-                app.currentFrame.top = .6*$scope.windowDimension.height+'px';
-                app.currentFrame.left = .03*$scope.windowDimension.width+'px';
+                app.currentFrame.top = .6 * $scope.windowDimension.height + 'px';
+                app.currentFrame.left = .03 * $scope.windowDimension.width + 'px';
                 break;
 
             case 'br':
-                app.currentFrame.top = .6*$scope.windowDimension.height+'px';
-                app.currentFrame.left = .8*$scope.windowDimension.width+'px';
+                app.currentFrame.top = .6 * $scope.windowDimension.height + 'px';
+                app.currentFrame.left = .85 * $scope.windowDimension.width + 'px';
                 break;
 
         }
@@ -137,13 +140,13 @@ app.controller("mainFrameController", function ($scope, $timeout, $location, $lo
         switch (spot) {
 
             case 'bottom':
-                app.currentFrame.top = .65*$scope.windowDimension.height+'px';
-                app.currentFrame.left = .03*$scope.windowDimension.width+'px';
+                app.currentFrame.top = .65 * $scope.windowDimension.height + 'px';
+                app.currentFrame.left = .03 * $scope.windowDimension.width + 'px';
                 break;
 
             case 'top':
-                app.currentFrame.top = .05*$scope.windowDimension.height+'px';
-                app.currentFrame.left = .03*$scope.windowDimension.width+'px';
+                app.currentFrame.top = .05 * $scope.windowDimension.height + 'px';
+                app.currentFrame.left = .03 * $scope.windowDimension.width + 'px';
                 break;
 
         }
@@ -170,12 +173,13 @@ app.controller("mainFrameController", function ($scope, $timeout, $location, $lo
 
                     //Check and see if this app is already running
                     var app = m.data.launch;
+                    $log.info("Request to launch: "+app.reverseDomainName+" received by MAINFRAME");
                     app.src = '/opkg/' + app.reverseDomainName + '/app/tv/';
                     app.show = false;
 
                     //Scale the width and height by measured. Old browser does not support vw, vh correctly.
-                    app.currentFrame.height = (app.currentFrame.height / 100 * $scope.windowDimension.height)+'px';
-                    app.currentFrame.width = (app.currentFrame.width / 100 * $scope.windowDimension.width)+'px';
+                    app.currentFrame.height = (app.currentFrame.height / 100 * $scope.windowDimension.height) + 'px';
+                    app.currentFrame.width = (app.currentFrame.width / 100 * $scope.windowDimension.width) + 'px';
 
 
                     switch (app.appType) {
@@ -239,21 +243,27 @@ app.controller("mainFrameController", function ($scope, $timeout, $location, $lo
                 }
 
                 //Move
+                //TODO does not work (will crash) for crawlers
                 if (m.data && m.data.move) {
 
                     var spot = m.data.move.spot;
                     var appToMove = m.data.move.app;
 
-                    var app = _.find($scope.runningApps, function (a) {
+
+                    var app = _.find($scope.widgetApps, function (a) {
                         return appToMove = a.reverseDomainName;
                     });
 
-                    //TODO This cannot be px, needs to be vw, vh for different resolutions!!!
-                    if (app && app.appType == 'widget') {
-                        moveWidgetToSpot(app, spot);
-                    } else {
-                        moveCrawlerToSpot(app.spot);
+                    if (spot == 'next') {
+                        //request to cycle this app
+                        var currentSpot = app.spot;
+                        var spotIdx = widgetLocations.indexOf(currentSpot);
+                        spotIdx++;
+                        if (spotIdx > widgetLocations.length) spotIdx = 0;
+                        spot = widgetLocations[spotIdx];
                     }
+                    moveWidgetToSpot(app, spot);
+
                 }
 
                 //TODO this should be a case statement

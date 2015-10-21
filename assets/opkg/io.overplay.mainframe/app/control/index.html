@@ -1,5 +1,5 @@
 <!DOCTYPE html>
-<html ng-app="optvShuffConApp">
+<html ng-app="optvMFConApp">
   <meta charset="UTF-8">
 
   <meta http-equiv="X-UA-Compatible" content="IE=edge">
@@ -18,12 +18,12 @@
   <!-- App Main and AngularJS Routes -->
 
 
-  <script src="app/optvShuffConApp.module.js"></script>
+  <script src="app/optvMFConApp.module.js"></script>
   <script src="/js/optvAPI/optvAPI.js"></script>
 
   <!-- Controllers -->
 
-  <script src="app/components/shuffcon/ShuffconController.js"></script>
+  <script src="app/components/mfcon/MFConController.js"></script>
 
   <link href="assets/bower_components/animate.css/animate.css" rel="stylesheet">
 
@@ -39,30 +39,22 @@
   <!--<link href="assets/bower_components/bootstrap/dist/css/bootstrap.css" rel="stylesheet">-->
 
 
-  <title>OPTV Shuffleboard Control</title>
+  <title>OPTV App Control</title>
 </head>
 
-<body ng-controller="shuffconController">
+<body ng-controller="mfConController">
 
 <!--Shuffleboard Remote Control -->
 
 
-<h1>Shuffleboard</h1>
-<div class="ctrl-holder rounded-border">
-  <div class="img-button red-sk lt" ng-click="changeRed(-1)">-</div>
-  <div class="img-button red-sk rt" ng-click="changeRed(1)">+</div>
-</div>
-<div class="ctrl-holder rounded-border">
-  <div class="img-button blue-sk lt" ng-click="changeBlue(-1)">-</div>
-  <div class="img-button blue-sk rt" ng-click="changeBlue(1)">+</div>
+<h1>Overplay TV</h1>
+<div class="app-button" ng-repeat="app in apps" ng-click="clicked(app)">
+  <div class="app-icon-holder">
+     <img ng-src="{{app.iconPath}}"/>
+  </div>
+  <div class="app-name">{{app.name}}&nbsp;</div>
 </div>
 
-<div class="ctrl-holder bottom">
-  <div class="sq-button rd2" ng-click="resetScores()"><i class="fa fa-bomb">&nbsp;RESET</i></div>
-  <div class="sq-button bl2" ng-click="move()"><i class="fa fa-arrows"></i>&nbsp;MOVE</div>
-  <div class="sq-button y" ng-click="home()"><i class="fa fa-home"></i>&nbsp;HOME</div>
-
-</div>
 
 
 </body>

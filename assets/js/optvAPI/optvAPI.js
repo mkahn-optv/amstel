@@ -68,7 +68,7 @@ angular.module('ngOpTVApi', [])
 
                  service.loadMessages = function () {
 
-                     return $http.get('/api/v1/message/popTo?to=' + _appName)
+                     return $http.get('/api/v1/message/popMessage?to=' + _appName)
                          .then(function (data) {
 
                                    //This is here for debugging
@@ -120,8 +120,8 @@ angular.module('ngOpTVApi', [])
                  service.postMessage = function (msg) {
 
                      if (msg.to && msg.data) {
-                         var message = {to: msg.to, data: msg.data, from: _appName};
-                         return $http.post('/api/v1/message', message);
+                         var message = {to: msg.to, message: { data: msg.data, from: _appName }};
+                         return $http.post('/api/v1/message/postMessage', message);
                      }
 
                      return $q.reject("Missing params");

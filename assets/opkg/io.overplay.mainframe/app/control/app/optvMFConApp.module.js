@@ -9,7 +9,7 @@
  **********************************/
 
 
-var app = angular.module('optvShuffConApp', [
+var app = angular.module('optvMFConApp', [
     'ngAnimate',
     'ngSanitize',
     'ngOpTVApi'
