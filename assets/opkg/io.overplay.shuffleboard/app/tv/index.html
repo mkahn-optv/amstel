@@ -27,10 +27,6 @@
 
   <!-- Directives -->
 
-
-  <link href="assets/bower_components/animate.css/animate.css" rel="stylesheet">
-
-
   <!--<link href="assets/css/style.css" rel="stylesheet">-->
   <link href="assets/bower_components/angular-toastr/dist/angular-toastr.css" rel="stylesheet">
   <link href='http://fonts.googleapis.com/css?family=Dosis:300,400' rel='stylesheet' type='text/css'>
@@ -39,7 +35,6 @@
   <!-- App Specific and Overridden CSS -->
   <!--<link href="assets/css/style.css" rel="stylesheet">-->
   <link href="assets/css/styles.css" rel="stylesheet">
-  <link href="assets/css/compiled-styles.css" rel="stylesheet">
 
 
   <title>OPTV Shuffleboard</title>
@@ -47,6 +42,16 @@
 
 <body ng-controller="rootController" ng-keypress="keyPressed($event)" id="docbody" ng-click="goLauncher()">
 
-<div ng-view></div>
+<div class="applet" ng-controller="shuffleController">
+  <div class="applet-banner">Overplay</div>
+  <div class="score-box red"  ng-class="{ 'grow' : score.redHighlight }">
+    <div>{{score.red}}</div>
+  </div>
+  <div class="score-box blue" ng-class="{ 'grow' : score.blueHighlight }">
+    <div>{{score.blue}}</div>
+  </div>
+  <!--<img src="assets/img/optvlogo100.png"/>-->
+</div>
+
 </body>
 </html>

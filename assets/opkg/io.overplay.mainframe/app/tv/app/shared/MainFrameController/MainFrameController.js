@@ -64,27 +64,41 @@ app.controller("mainFrameController", function ($scope, $timeout, $location, $lo
         $log.info("NeTV remote pressed: " + netvButton);
 
 
-        $scope.$apply(function () {
+        //$scope.$apply(function () {
 
-            switch (netvButton) {
+        switch (netvButton) {
 
-                case 'widget':
-                    $log.info("Widget button pressed");
-                    toggleAppPicker();
-                    break;
+            case 'widget':
+                $log.info("Widget button pressed");
+                toggleAppPicker();
+                break;
 
-                case 'left':
-                case 'right':
-                case 'center':
-                case 'cpanel':
-                default:
-                    break;
+            case 'left':
+            case 'right':
+            case 'center':
+            case 'cpanel':
+            case 'up':
+            case 'down':
+                optvModel.postMessage({to: "io.overplay.apppicker", data: {remote: netvButton}});
+                break;
+            default:
+                break;
 
-            }
+        }
 
-        })
+        //})
 
 
+    }
+
+    /**
+     * Does the 'vw' style to 'px' mapping a modern browser would do for us, sigh...
+     * @param pctg
+     */
+    function convertToPx(pctg, val){
+
+        var int = parseInt( pctg.replace(/v[w,h]/, ""));
+        return Math.floor( (int/100)*val )+"px";
     }
 
 
@@ -93,23 +107,23 @@ app.controller("mainFrameController", function ($scope, $timeout, $location, $lo
         switch (spot) {
 
             case 'tl':
-                app.currentFrame.top = "5vh";
-                app.currentFrame.left = "3vw";
+                app.currentFrame.top = .05*$scope.windowDimension.height+'px';
+                app.currentFrame.left = .03*$scope.windowDimension.width+'px';
                 break;
 
             case 'tr':
-                app.currentFrame.top = "5vh";
-                app.currentFrame.left = "80vw";
+                app.currentFrame.top = .05*$scope.windowDimension.height+'px';
+                app.currentFrame.left = .8*$scope.windowDimension.width+'px';
                 break;
 
             case 'bl':
-                app.currentFrame.top = "60vh";
-                app.currentFrame.left = "3vw";
+                app.currentFrame.top = .6*$scope.windowDimension.height+'px';
+                app.currentFrame.left = .03*$scope.windowDimension.width+'px';
                 break;
 
             case 'br':
-                app.currentFrame.top = "60vh";
-                app.currentFrame.left = "80vw";
+                app.currentFrame.top = .6*$scope.windowDimension.height+'px';
+                app.currentFrame.left = .8*$scope.windowDimension.width+'px';
                 break;
 
         }
@@ -123,13 +137,13 @@ app.controller("mainFrameController", function ($scope, $timeout, $location, $lo
         switch (spot) {
 
             case 'bottom':
-                app.currentFrame.top = "65vh";
-                app.currentFrame.left = "3vw";
+                app.currentFrame.top = .65*$scope.windowDimension.height+'px';
+                app.currentFrame.left = .03*$scope.windowDimension.width+'px';
                 break;
 
             case 'top':
-                app.currentFrame.top = "5vh";
-                app.currentFrame.left = "3vw";
+                app.currentFrame.top = .05*$scope.windowDimension.height+'px';
+                app.currentFrame.left = .03*$scope.windowDimension.width+'px';
                 break;
 
         }
@@ -158,6 +172,11 @@ app.controller("mainFrameController", function ($scope, $timeout, $location, $lo
                     var app = m.data.launch;
                     app.src = '/opkg/' + app.reverseDomainName + '/app/tv/';
                     app.show = false;
+
+                    //Scale the width and height by measured. Old browser does not support vw, vh correctly.
+                    app.currentFrame.height = (app.currentFrame.height / 100 * $scope.windowDimension.height)+'px';
+                    app.currentFrame.width = (app.currentFrame.width / 100 * $scope.windowDimension.width)+'px';
+
 
                     switch (app.appType) {
 
@@ -278,9 +297,23 @@ app.controller("mainFrameController", function ($scope, $timeout, $location, $lo
         .then(function (data) {
                   $scope.launcher = data.data[0];
                   $scope.launcher['src'] = '/opkg/' + $scope.launcher.reverseDomainName + '/app/tv/index.html';
-                  $timeout(function () { showAppPicker(true) }, 1500);
+                  $scope.launcher.currentFrame.height = convertToPx($scope.launcher.currentFrame.height, $scope.windowDimension.height);
+                  $scope.launcher.currentFrame.width = convertToPx($scope.launcher.currentFrame.width, $scope.windowDimension.width);
+
+                  $timeout(function () { showAppPicker(true) }, 500);
               })
 
+
+    $scope.$watch(function () {
+        return window.innerWidth;
+    }, function (value) {
+        console.log(window.innerWidth + ' x ' + window.innerHeight);
+        $scope.windowDimension = {
+            text: window.innerWidth + ' x ' + window.innerHeight,
+            width: window.innerWidth,
+            height: window.innerHeight
+        }
+    });
 
 });
 

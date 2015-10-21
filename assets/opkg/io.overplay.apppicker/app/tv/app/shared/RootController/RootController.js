@@ -1,6 +1,6 @@
 /**
  *
- * Functionality that is shared across entire app should be in here or a service.
+ * ROOT CONTROLLER FOR APP PICKER
  *
  *
  */
@@ -26,43 +26,43 @@ app.controller("rootController", function ($scope, $timeout, $location, $log, $r
         /*
          Buttons are: 'widget', 'cpanel', 'up', 'down', 'left', 'right', 'center'
          */
-        console.log("NeTV remote pressed: " + netvButton);
+        $log.info("Message received saying NeTV remote pressed: " + netvButton);
 
 
-        $scope.$apply(function () {
+        switch (netvButton) {
 
-            switch (netvButton) {
+            case 'widget':
+                //toggleUI();
+                break;
 
-                case 'widget':
-                    //toggleUI();
-                    break;
+            case 'up':
+            case 'left':
+                _selectedIcon--;
+                if (_selectedIcon < 0) _selectedIcon = $scope.apps.length - 1;
+                break;
 
-                case 'left':
-                    _selectedIcon--;
-                    if (_selectedIcon < 0) _selectedIcon = $scope.apps.length - 1;
-                    break;
+            case 'down':
+            case 'right':
+                _selectedIcon++;
+                if (_selectedIcon == $scope.apps.length) _selectedIcon = 0;
+                break;
 
-                case 'right':
-                    _selectedIcon++;
-                    if (_selectedIcon == $scope.apps.length) _selectedIcon = 0;
-                    break;
+            case 'center':
+                $log.info("Center pushed. Go to: " + $scope.apps[_selectedIcon].reverseDomainName);
+                //toggleUI();
+                $scope.clicked($scope.apps[_selectedIcon]);
+                break;
 
-                case 'center':
-                    $log.info("Center pushed. Go to: " + $scope.apps[_selectedIcon].reverseDomainName);
-                    //toggleUI();
-                    $scope.clicked($scope.apps[_selectedIcon]);
-                    break;
+            case 'cpanel':
+                $rootScope.$broadcast('CPANEL');
+                break;
 
-                case 'cpanel':
-                    $rootScope.$broadcast('CPANEL');
-                    break;
+            default:
+                break;
 
-                default:
-                    break;
 
-            }
+        }
 
-        })
 
 
     }
@@ -72,7 +72,7 @@ app.controller("rootController", function ($scope, $timeout, $location, $log, $r
     }
 
 
-
+    //Get all the apps to show on AppPicker
     $http.get('/api/v1/apps?onLauncher=true')
         .then(function (data) {
                   $scope.apps = data.data;
@@ -81,23 +81,19 @@ app.controller("rootController", function ($scope, $timeout, $location, $log, $r
 
     $scope.clicked = function (app) {
         $log.info("Clicked on: " + app.reverseDomainName);
-        //$window.location.href = "/opkg/"+app.reverseDomainName+"/app/tv/index.html";
-        //$scope.ui.onscreen = false;
-        //$timeout(function () {
-         //   optvModel.postMessage({
-         //       to: "io.overplay.mainframe", data: {launch: app}
-         //   });
-        //}, 500);
-
         optvModel.postMessage({
-               to: "io.overplay.mainframe", data: {launch: app}
-           });
+            to: "io.overplay.mainframe", data: {launch: app}
+        });
 
     }
 
     function inboundMessage(msg) {
         $log.info("Inbound message..to APPPICKER");
         $log.info(JSON.stringify(msg));
+        var inbound = msg[0];
+        if (inbound.data.remote){
+            $scope.buttonPushed(inbound.data.remote);
+        }
     }
 
     optvModel.init({

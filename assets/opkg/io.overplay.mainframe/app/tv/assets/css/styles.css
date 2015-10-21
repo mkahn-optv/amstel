@@ -33,7 +33,7 @@ body {
 
 .app-iframe {
     position: fixed;
-    border: 0px;
+    border: 0;
     transition: top 1s ease, left 1s ease;
     -webkit-transition: top 1s ease, left 1s ease;
 }
@@ -44,12 +44,59 @@ body {
     left: 0;
     transition: left 1s linear;
     -webkit-transition: left 0.5s linear;
-    border:0px;
+    border: 0;
 
 }
+.hide-fade {
+    -webkit-transition: opacity linear .3s;
+    -moz-transition: opacity linear .3s;
+    -o-transition: opacity linear .3s;
+    transition: opacity linear .3s;
+    display: block !important;
+    opacity: 1;
+}
+
+.hide-fade.ng-hide-add {
+    opacity: 0;
+}
+
+.debugbox {
+    position: absolute;
+    bottom: 200px;
+    right: 200px;
+    color: #d3d9fd;
+    font-size: 60px;
+    font-family: "Dosis-Bold", monospace;
+}
+
+.hdmessage {
+    opacity: 0;
+}
+
+/* 4:3 SDTV should just print "BUY A NEW FUCKING TV */
+@media screen and (max-width: 720px) and (max-height: 480px) {
 
 .launcher-offscreen {
-    left: -50vw!important;
+        left: -300px !important;
+    }
+}
+
+/* 1080i and 1080p */
+@media screen and (min-width: 721px) and (min-height: 481px) {
+
+    .launcher-offscreen {
+        left: -500px !important;
+    }
+
+    .hdmessage {
+             opacity: 1;
+             color: #ff9acf;
+             font-size: 30px;
+             width: 100%;
+             text-align: right;
+    }
+
+
 }
 
 /* Here to insert borders for placement testing */
@@ -57,15 +104,5 @@ body {
     border: 0px dashed transparent;
 }
 
-.hide-fade {
-  -webkit-transition:opacity linear .3s;
-  -moz-transition:opacity linear .3s;
-  -o-transition:opacity linear .3s;
-  transition:opacity linear .3s;
-  display:block!important;
-  opacity: 1;
-}
 
-.hide-fade.ng-hide-add {
-  opacity:0;
-}
+

@@ -37,37 +37,93 @@ body {
     opacity: 0.5;
 }
 
+::-webkit-scrollbar {
+    display: none;
+}
+
 /* New icon tray look 10/20/2015 */
 
-.icon-tray {
+/* 4:3 SDTV should just print "BUY A NEW FUCKING TV */
+/*@media screen and (max-width: 720px) and (max-height: 480px) {
 
-    position: fixed;
-    top: 0;
-    left: 0vw;
-    width: 26vw;
-    height: 100vh;
-    background-color: #110022;
-    transition: left 1s linear;
-    -webkit-transition: left 1s linear;
+}*/
 
-}
+/* 1080i and 1080p 1920x1080 */
+@media screen and (min-width: 721px) and (min-height: 481px) {
 
-.icon-tray > .logo {
-    position: relative;
-    top: 3vh;
-    /* left: 2.5vw; */
-    color: white;
-    font-size: 3vw;
-    width: 100%;
-    text-align: center;
-}
+    .icon-tray {
 
-.icon-tray .icon-scroller {
-    position: relative;
-    top: 6vh;
-    left: 3vw;
-    width: 25vw;
-    overflow-y: scroll;
+        position: fixed;
+        top: 0;
+        left: 0;
+        width: 350px;
+        height: 1400px;
+        background-color: #110022;
+        transition: left 1s linear;
+        -webkit-transition: left 1s linear;
+        font-family: "Dosis-Bold", monospace;
+
+    }
+
+    .icon-tray > .logo {
+        position: relative;
+        top: 35px;
+        /* left: 2.5vw; */
+        color: #caf8ff;
+        font-size: 35px;
+        width: 100%;
+        text-align: center;
+    }
+
+    .icon-tray .icon-scroller {
+        position: relative;
+        top: 60px;
+        left: 60px;
+        width: 280px;
+        overflow-y: scroll;
+    }
+
+    .app-icon-frame {
+        width: 80%;
+        position: relative;
+        margin-top: 30px;
+    }
+
+    .app-icon-img {
+        margin: auto;
+    }
+
+    .app-icon-img img {
+
+        margin: auto;
+        max-width: 100%;
+
+    }
+
+    .selected {
+
+        border: 3px solid #656565;
+        padding: 2px;
+
+    }
+
+    .not-selected {
+        border: 3px solid transparent;
+
+    }
+
+    .app-icon-frame .app-icon-label {
+        color: white;
+        font-size: 20px;
+        overflow: hidden;
+        text-align: center;
+        width: 80%;
+        padding: 4px;
+        margin-left: auto;
+        margin-right: auto;
+        border-radius: 3px;
+    }
+
 }
 
 app-icon {
@@ -77,61 +133,6 @@ app-icon {
     -o-transition: all 0.25s ease-in-out;
     transition: all 0.25s ease-in-out;
 }
-
-.app-icon-frame {
-    width: 80%;
-    position: relative;
-    margin-top: 3vh;
-}
-
-.app-icon-img {
-    margin: auto;
-}
-
-.app-icon-img img {
-
-    margin: auto;
-    max-width: 100%;
-
-}
-
-.selected {
-
-    border: 3px solid #656565;
-    padding: 2px;
-
-}
-
-.not-selected {
-    border: 3px solid transparent;
-
-}
-
-.app-icon-frame .app-icon-label {
-    color: white;
-    font-size: 2vw;
-    overflow: hidden;
-    text-align: center;
-    width: 80%;
-    padding: 4px;
-    margin-left: auto;
-    margin-right: auto;
-    border-radius: 3px;
-}
-
-/*
-
-
-
-.icon-holder {
-    position: relative;
-    top: 200px;
-    margin-left: 40px;
-    margin-right: auto;
-
-}
-
-*/
 
 .hide-icon {
 

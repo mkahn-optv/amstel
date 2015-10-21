@@ -37,7 +37,7 @@ module.exports = {
 
         Message.getMessagesTo(to)
             .then(function (data) {
-                      sails.log.debug("Pop message data: " + util.inspect(data));
+                      //sails.log.debug("Pop message data: " + util.inspect(data));
                       if (!inhibitPop) {
                           data.forEach(function (m) {
                               Message.destroy(m.id)
