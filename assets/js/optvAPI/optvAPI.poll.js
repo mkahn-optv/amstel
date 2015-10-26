@@ -13,7 +13,7 @@
 
 
 angular.module('ngOpTVApi', [])
-    .factory('optvModel', function ($http, $log, $interval, $rootScope, $q) {
+    .factory('optvModel', function ($http, $log, $interval, $rootScope) {
 
                  var service = {model: {}};
 
@@ -66,77 +66,65 @@ angular.module('ngOpTVApi', [])
 
                  }
 
+                 service.loadMessages = function () {
+
+                     return $http.get('/api/v1/message/popMessage?to=' + _appName)
+                         .then(function (data) {
+
+                                   //This is here for debugging
+                                   if (data.data.length > 0) {
+                                       $log.info("New messages received. Length: " + data.data.length);
+                                   }
+
+                                   return data.data;
+
+                               });
+
+
+                 }
 
                  service.init = function (params) {
 
                      _appName = params.appName;
+                     _refreshInterval = params.refreshInterval || 10000; //if you don't care enough to set it, you get 10s
                      _dataCb = params.dataCallback;
                      _msgCb = params.messageCallback;
                      _initialValue = params.initialValue || {};
 
-                     //If a data cb is defined, subscribe
-                     //TODO should only subscribe to one instance of the appdata model!!!
-                     if (_dataCb) {
-                         io.socket.get('/api/v1/appdata');
-                     }
-
-                     //If a message cb is defined, subscribe
-                     if (_msgCb) {
-                         io.socket.get('/api/v1/message');
-                     }
-
-                     if (_msgCb || _dataCb) {
-
-                         io.socket.on('message', function (obj) {
-                             //Check whether the verb is created or not
-                             $log.info("SocketIO message inbound to API");
-                             $log.info(angular.toJson(obj, true));
-                             if (obj.data.dest==_appName) _msgCb(obj.data);
-
-                         });
-
-                         io.socket.on('appdata', function (obj) {
-                             //Check whether the verb is created or not
-                             $log.info("SocketIO appdata inbound to API");
-                             $log.info(angular.toJson(obj, true));
-                             if (obj.data.appName==_appName) _dataCb(obj.data.data);
-
-                         });
-
+                     //If there are either kind of callback defined, then setup the callback looper
+                     if (_refreshInterval && (_dataCb || _msgCb )) {
+                         _refreshMachine = $interval(function () {
+                             if (_dataCb)
+                                 service.loadModel().then(_dataCb);
+                             if (_msgCb)
+                                 service.loadMessages()
+                                     .then(function (msg) {
+                                               if (msg.length)
+                                                   _msgCb(msg);
+                                           });
+                         }, _refreshInterval);
                      }
 
                      return service.loadModel();
 
+
                  }
 
-                //TODO detect failure in io.socket.post
+                 //TODO this is replicated from the method above, should be cleaner up
                  service.save = function () {
 
-                     return $q(function(resolve, reject){
-
-                        io.socket.put('/api/v1/AppData/' + _dbId, {data: service.model, appName: _appName}, function(data, jwres){
-                            resolve(data)
-                        });
-
-                     });
+                     return $http.put('/api/v1/AppData/' + _dbId, {data: service.model, appName: _appName});
 
                  };
 
                  service.postMessage = function (msg) {
 
-                     return $q(function (resolve, reject) {
+                     if (msg.to && msg.data) {
+                         var message = {to: msg.to, message: { data: msg.data, from: _appName }};
+                         return $http.post('/api/v1/message/postMessage', message);
+                     }
 
-                         if (msg.to && msg.data) {
-                             var message = {dest: msg.to, message: msg.data, from: _appName};
-                             io.socket.post('/api/v1/message', message, function (data, jwres) {
-                                 resolve(data);
-
-                             });
-                         } else {
-                             reject("Missing params");
-                         }
-                     })
-
+                     return $q.reject("Missing params");
 
                  }
 

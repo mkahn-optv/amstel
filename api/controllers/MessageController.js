@@ -1,30 +1,17 @@
 /**
  * MessageController
  *
- * @description :: Server-side logic for managing Messages
+ * @description :: Server-side logic for managing messages
  * @help        :: See http://links.sailsjs.org/docs/controllers
  */
-var util = require('util');
 
 module.exports = {
 
-    popMessage: function (req, res, next) {
+	subscribe: function(req, res){
 
-        var to = req.param('to');
-        var rval = IAMessaging.popMessages(to);
-        res.ok(rval);
+        Message.watch(req.socket);
+        res.send(200);
 
-    },
-
-    postMessage: function (req, res, next) {
-
-        var to = req.param('to');
-        IAMessaging.postMessage(to, req.param('message'));
-        res.ok(req.param('message'));
-
-
-    }
-
-
+	}
 };
 

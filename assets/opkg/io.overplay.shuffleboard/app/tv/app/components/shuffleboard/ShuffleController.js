@@ -7,7 +7,6 @@ app.controller("shuffleController",
 
                    console.log("Loading shuffleController");
 
-
                    $scope.position = {corner: 0};
                    $scope.score = {red: 0, blue: 0, redHighlight: false, blueHighlight: false};
 
@@ -18,8 +17,7 @@ app.controller("shuffleController",
                        $scope.position.corner++;
                        if ($scope.position.corner > 3) $scope.position.corner = 0;
 
-                   })
-
+                   });
 
                    function updateLocalScore() {
 
@@ -31,7 +29,6 @@ app.controller("shuffleController",
 
 
                        if (animRed) {
-
                            $scope.score.redHighlight = true;
                            $timeout(function () { $scope.score.redHighlight = false}, 500);
                        }
@@ -40,14 +37,18 @@ app.controller("shuffleController",
                            $scope.score.blueHighlight = true;
                            $timeout(function () { $scope.score.blueHighlight = false}, 500);
                        }
-
-
                    }
 
                    function modelUpdate(data) {
+                       $scope.$apply(function () {
+
+                           _remoteScore = data;
+                           updateLocalScore();
+
+                       });
+
                        $log.debug("Model update callback...")
-                       _remoteScore = data;
-                       updateLocalScore();
+
                    }
 
                    function inboundMessage(msg) {
@@ -58,18 +59,17 @@ app.controller("shuffleController",
 
                        optvModel.init({
                            appName: "io.overplay.shuffleboard",
-                           refreshInterval: 1000,
                            dataCallback: modelUpdate,
                            messageCallback: inboundMessage,
                            initialValue: {red: 0, blue: 0, toTV: undefined},
-                           autoSync: false
                        })
-                           .then(modelUpdate);
+                           .then(function (data) {
+                                     _remoteScore = data;
+                                     updateLocalScore();
+                                 });
 
                    }
 
-
                    updateFromRemote();
-
 
                });

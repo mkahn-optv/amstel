@@ -6,6 +6,8 @@
   <meta http-equiv="X-UA-Compatible" content="IE=edge">
   <meta name="viewport" content="width=device-width, initial-scale=1">
 
+  <script src="/js/dependencies/sails.io.js"></script>
+
   <!--<script src="assets/bower_components/jquery/dist/jquery.min.js"></script>-->
   <script src="assets/bower_components/angular/angular.js"></script>
   <script src="assets/bower_components/angular-route/angular-route.js"></script>
@@ -18,6 +20,7 @@
   <!-- App Main and AngularJS Routes -->
   <script src="app/optvMainFrameApp.module.js"></script>
   <script src="app/optvMainFrameApp.routes.js"></script>
+
   <script src="/js/optvAPI/optvAPI.js"></script>
 
   <!-- Controllers -->
@@ -34,10 +37,9 @@
   <!-- App Specific and Overridden CSS -->
   <!--<link href="assets/css/style.css" rel="stylesheet">-->
   <link href="assets/css/styles.css" rel="stylesheet">
-  <link href="assets/css/compiled-styles.css" rel="stylesheet">
 
 
-  <title>OPTV Demo</title>
+  <title>OPTV Demo WS</title>
 </head>
 
 <body ng-controller="mainFrameController" ng-keypress="keyPressed($event)" id="docbody" ng-click="keyPressed('center')">
@@ -61,7 +63,7 @@
 <div class="debugbox">{{windowDimension.text}}
   <div class="hdmessage">1080p</div>
   <!--<br><button ng-click="buttonPushed('down')">DOWN V</button>-->
-  </div>
+</div>
 
 </body>
 </html>
