@@ -53,6 +53,18 @@ h1 {
     font-size: 15px;
 }
 
+.score-button {
+    display: inline-block;
+    width: 70px;
+    height: 70px;
+    border-radius: 30px;
+    margin: 1%;
+    text-align: center;
+    line-height: 65px;
+    font-size: 50px;
+}
+
+
 .rt {
     margin-right: 15%;
 }

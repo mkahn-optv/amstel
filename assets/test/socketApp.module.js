@@ -12,7 +12,8 @@
 var app = angular.module('socketApp', [
     'ngRoute',
     'ngAnimate',
-    'ngSanitize'
+    'ngSanitize',
+    'optvModel.service'
     ]);
 
 

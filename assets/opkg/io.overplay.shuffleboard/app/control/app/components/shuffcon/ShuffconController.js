@@ -13,14 +13,20 @@ app.controller("shuffconController",
                        $scope.ui.show = true;
                    }
 
+                   function dataChanged(data){
+
+                   }
+
+                   $scope.redScore = function(){ return optvModel.model.red; }
+                   $scope.blueScore = function(){ return optvModel.model.blue; }
+
                    function initialize() {
 
                        optvModel.init({
                            appName: "io.overplay.shuffleboard",
-                           initialValue: {red: 0, blue: 0, toTV: undefined},
-                           autoSync: true
-                       })
-                           .then(ready);
+                           initialValue: {red: 0, blue: 0 },
+                           dataCallback: dataChanged
+                       });
 
                    }
 

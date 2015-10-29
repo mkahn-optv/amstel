@@ -20,6 +20,8 @@ app.controller("mainFrameController", function ($scope, $timeout, $location, $lo
                    $scope.widgetApps = [];
                    $scope.crawlerApps = [];
 
+                   $scope.lastMessage = "waiting...";
+
 
                    $scope.keyPressed = function (event) {
 
@@ -44,10 +46,10 @@ app.controller("mainFrameController", function ($scope, $timeout, $location, $lo
 
                        $scope.uiState.showAppPicker = shouldShow;
 
-                       if (shouldShow) {
-                           $log.debug("Auto-dismissing app picker");
-                           $timeout(function () { showAppPicker(false); }, 6000 * 3);
-                       }
+                       //if (shouldShow) {
+                       //    $log.debug("Auto-dismissing app picker");
+                       //    $timeout(function () { showAppPicker(false); }, 6000 * 3);
+                       //}
                    }
 
                    function toggleAppPicker() {
@@ -164,10 +166,15 @@ app.controller("mainFrameController", function ($scope, $timeout, $location, $lo
 
                    function inboundMessageMain(m) {
 
+                       $log.info("MAINFRAME got message. Before $scope.apply()");
+                       console.log("MAINFRAME got message. Before $scope.apply(). console.log.");
+
                        $scope.$apply(function () {
 
-                           $log.info("Mainframe received message: " + m);
+                           $log.info("MAINFRAME got message. Before $scope.apply()");
 
+                           $log.info("Mainframe received message: " + m);
+                           $scope.lastMessage = angular.toJson(m);
                            //Launch
                            if (m.message && m.message.launch) {
 

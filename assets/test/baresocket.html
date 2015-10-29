@@ -30,15 +30,11 @@
   <link href="assets/css/styles.css" rel="stylesheet">
 
 
-  <title>Socket Shit</title>
+  <title>OPTV App Control</title>
 </head>
 
 <body ng-controller="socketController">
   <h1>Socket Fun</h1>
-  <p>Messages:</p>
-  <p ng-repeat="m in messages" style="color: #4a91ff;">{{m}}</p>
-  <p>AppData:</p>
-  <p ng-repeat="d in data" style="color: #c539ff;">{{d}}</p>
-  <button ng-click="sendMessage()">Send Message</button>
+  <h3 ng-repeat="m in messages" style="color: pink;">{{m}}</h3>
 </body>
 </html>

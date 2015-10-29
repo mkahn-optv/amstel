@@ -90,21 +90,16 @@ app.controller("rootController", function ($scope, $timeout, $location, $log, $r
     function inboundMessage(msg) {
         $log.info("Inbound message..to APPPICKER");
         $log.info(JSON.stringify(msg));
-        var inbound = msg[0];
-        if (inbound.data.remote){
-            $scope.buttonPushed(inbound.data.remote);
+        if (msg.message.remote){
+            $scope.buttonPushed(msg.message.remote);
         }
     }
 
     optvModel.init({
         appName: "io.overplay.apppicker",
-        refreshInterval: 1000,
         messageCallback: inboundMessage,
-        initialValue: {},
-        autoSync: false
     });
 
-    //$timeout(function () { $scope.ui.onscreen = true }, 1500);
 
 });
 

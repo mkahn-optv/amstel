@@ -7,10 +7,18 @@ app.controller("shuffleController",
 
                    console.log("Loading shuffleController");
 
+                   io.socket.get('/api/v1/appdata');
+
+                   io.socket.on('appdata', function (obj) {
+                       $log.info("Message came into AppData.")
+                   });
+
                    $scope.position = {corner: 0};
                    $scope.score = {red: 0, blue: 0, redHighlight: false, blueHighlight: false};
 
                    var _remoteScore = {};
+
+                   function logLead() { return "ShuffleController: "; }
 
                    $scope.$on('CPANEL', function () {
 
@@ -47,12 +55,12 @@ app.controller("shuffleController",
 
                        });
 
-                       $log.debug("Model update callback...")
+                       $log.debug(logLead() + "Model update callback...")
 
                    }
 
                    function inboundMessage(msg) {
-                       $log.debug("Inbound message...");
+                       $log.debug(logLead() + "Inbound message...");
                    }
 
                    function updateFromRemote() {
@@ -62,11 +70,7 @@ app.controller("shuffleController",
                            dataCallback: modelUpdate,
                            messageCallback: inboundMessage,
                            initialValue: {red: 0, blue: 0, toTV: undefined},
-                       })
-                           .then(function (data) {
-                                     _remoteScore = data;
-                                     updateLocalScore();
-                                 });
+                       });
 
                    }
 

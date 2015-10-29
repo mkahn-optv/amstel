@@ -6,8 +6,7 @@
  Date:       10/14/15 5:16 PM
  Author:     mkahn
 
- This is a preliminary version of an inter-app communications module (Angular Factory). Ultimately, we will use socketio
- for better performance. For now, we use polling.
+ This is a preliminary version of an inter-app communications module (Angular Factory).
 
  **********************************/
 
@@ -16,9 +15,6 @@ angular.module('ngOpTVApi', [])
     .factory('optvModel', function ($http, $log, $interval, $rootScope, $q) {
 
                  var service = {model: {}};
-
-                 var _refreshInterval;
-                 var _refreshMachine;
 
                  //Callback for AppData updates
                  var _dataCb;
@@ -30,40 +26,109 @@ angular.module('ngOpTVApi', [])
                  var _dbId;
                  var _initialValue;
 
-                 function writeData(outboundData) {
+                 function logLead() {
+                     return "optvAPI (" + _appName + "): ";
+                 }
 
-                     return $http.post('/api/v1/AppData', {appName: _appName, data: outboundData})
-                         .then(function (data) {
-                                   _dbId = data.data.id;
-                                   return data.data.data;
-                               });
+                 function setInitialAppDataValue() {
+
+                     service.model = _initialValue;
+                     io.socket.post('/api/v1/appdata', {
+                         appName: _appName,
+                         data: _initialValue
+                     }, function (data, jwres) {
+
+                         $log.debug(logLead() + "io.posted initial value");
+
+                     })
 
                  }
 
-                 service.loadModel = function () {
+                 function subscribeToAppDataNotifications() {
 
-                     return $http.get('/api/v1/AppData/model?appName=' + _appName)
-                         .then(function (data) {
+                     io.socket.get('/app/v1/appdata');
 
-                                   if (data.data.data) {
+                     io.socket.on('appdata', function (obj) {
+                         $log.info(logLead() + "Message came into AppData.")
+                         handleAppDataMessage(obj);
+                     });
 
-                                       //$log.debug("optvModel: model has existing data.");
-                                       service.model = data.data.data; // no nice, we named it thrice
-                                       _dbId = data.data.id; // id of the single data entry for this app
-                                       return service.model;
+                 }
 
-                                   } else {
+                 function handleAppDataMessage(obj) {
 
-                                       // There is no data already in the DB, so let's create an entry with the default
-                                       // data, or nothing if that is what the user did(nt) provide
+                     //Check whether the verb is created or not
+                     switch (obj.verb) {
 
-                                       return writeData(_initialValue);
+                         case 'created':
 
-                                   }
+                             $log.info(logLead() + "new appData created.");
+                             if (obj.data.appName == _appName) {
+                                 $log.info(logLead() + " data is for us, forwarding");
+                                 _dataCb(obj.data.data);
+                             }
+                             break;
+
+                         case 'updated':
+
+                             $log.info(logLead() + " appData modded.");
+                             if (obj.previous.appName == _appName) {
+                                 $log.info(logLead() + " data is for us, forwarding");
+                                 _dataCb(obj.data.data);
+                             }
+
+                             break;
+
+                         default:
+
+                     }
+
+                 }
 
 
-                               });
+                 function subscribeToGlobalRoom() {
 
+                     //Subscribe to ws messages
+                     io.socket.post('/api/v1/ws/subscribe', {}, function (body, JWR) {
+                         $log.info(body);
+                     });
+
+                     io.socket.on('intra-app-msg', function (obj) {
+                         $log.info(logLead + "Intra app message came in.")
+                         handleIntraAppMessage(obj);
+                     });
+
+                 }
+
+                 function handleIntraAppMessage(obj) {
+
+                     //Lots of log messages while debugging the WS implementation
+                     $log.info(logLead + "SocketIO message inbound to optvAPI for app: " + _appName);
+                     $log.info(logLead + "SocketIO message destination: " + obj.dest);
+                     $log.info(logLead + "SocketIO message will be relayed? " + (obj.dest == _appName));
+                     $log.info(angular.toJson(obj, true));
+
+                     if (obj.dest == _appName) {
+                         $log.info(logLead + "optvAPI making message callback to " + _appName);
+                         _msgCb(obj);
+                     }
+
+                 }
+
+
+                 function loadModel() {
+
+                     return $q(function (resolve, reject) {
+
+                         io.socket.get('/api/v1/AppData/model?appName=' + _appName, function (data, jwres) {
+
+                             if (jwres.statusCode != 200)
+                                 reject(jwres);
+                             else
+                                 resolve(data);
+                         })
+
+                     })
                  }
 
 
@@ -74,49 +139,66 @@ angular.module('ngOpTVApi', [])
                      _msgCb = params.messageCallback;
                      _initialValue = params.initialValue || {};
 
-                     //If a data cb is defined, subscribe
-                     //TODO should only subscribe to one instance of the appdata model!!!
+                     $log.debug("optvAPI init for app: " + _appName);
+
                      if (_dataCb) {
-                         io.socket.get('/api/v1/appdata');
+
+                         io.socket.get('/api/v1/AppData/model?appName=' + _appName, function (data, jwres) {
+
+                             if (jwres.statusCode != 200) {
+                                 $log.info(logLead + " model data not in DB, creating");
+                                 service.model = _initialValue;
+                                 setInitialAppDataValue();
+                             }
+                             else {
+                                 $log.info(logLead() + " model data (appData) already existed.");
+                                 service.model = data.data;
+                                 _dbId = data.id;
+
+                             }
+                         });
+
+                         //check if model already exists
+
+                         //Commented out because Chumby browser sucks fat hariy dong
+
+                         //loadModel()
+                         //    .then(function (data) {
+                         //              $log.info(logLead() + " model data (appData) already existed.");
+                         //              service.model = data.data;
+                         //              _dbId = data.id;
+                         //          })
+                         //    .catch(function (err) {
+                         //               $log.info(logLead + " model data not in DB, creating");
+                         //               service.model = _initialValue;
+                         //               setInitialAppDataValue();
+                         //           });
+
+                         $log.debug("optvAPI init app: " + _appName + " subscribing to data");
+                         subscribeToAppDataNotifications();
+
                      }
 
                      //If a message cb is defined, subscribe
                      if (_msgCb) {
-                         io.socket.get('/api/v1/message');
+                         $log.debug("optvAPI init app: " + _appName + " subscribing to messages");
+                         subscribeToGlobalRoom();
                      }
-
-                     if (_msgCb || _dataCb) {
-
-                         io.socket.on('message', function (obj) {
-                             //Check whether the verb is created or not
-                             $log.info("SocketIO message inbound to API");
-                             $log.info(angular.toJson(obj, true));
-                             if (obj.data.dest==_appName) _msgCb(obj.data);
-
-                         });
-
-                         io.socket.on('appdata', function (obj) {
-                             //Check whether the verb is created or not
-                             $log.info("SocketIO appdata inbound to API");
-                             $log.info(angular.toJson(obj, true));
-                             if (obj.data.appName==_appName) _dataCb(obj.data.data);
-
-                         });
-
-                     }
-
-                     return service.loadModel();
 
                  }
 
-                //TODO detect failure in io.socket.post
                  service.save = function () {
 
-                     return $q(function(resolve, reject){
+                     return $q(function (resolve, reject) {
 
-                        io.socket.put('/api/v1/AppData/' + _dbId, {data: service.model, appName: _appName}, function(data, jwres){
-                            resolve(data)
-                        });
+                         io.socket.put('/api/v1/AppData/' + _dbId, {data: service.model},
+                                       function (data, jwres) {
+
+                                           if (jwres.statusCode != 200)
+                                               reject(jwres);
+                                           else
+                                               resolve(data);
+                                       });
 
                      });
 
@@ -126,12 +208,21 @@ angular.module('ngOpTVApi', [])
 
                      return $q(function (resolve, reject) {
 
-                         if (msg.to && msg.data) {
+                         //TODO remove 'to' throughout all apps...for now just or it.
+                         var dest = msg.dest || msg.to || "io.overplay.mainframe";
+
+                         if (dest && msg.data) {
                              var message = {dest: msg.to, message: msg.data, from: _appName};
-                             io.socket.post('/api/v1/message', message, function (data, jwres) {
-                                 resolve(data);
+                             io.socket.post('/api/v1/ws/shout', message, function (data, jwres) {
+
+                                 if (jwres.statusCode != 200) {
+                                     reject(jwres);
+                                 } else {
+                                     resolve(data);
+                                 }
 
                              });
+
                          } else {
                              reject("Missing params");
                          }

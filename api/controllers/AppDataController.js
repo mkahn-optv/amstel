@@ -7,22 +7,15 @@
 
 module.exports = {
 
-
-    sync: function (req, res, next) {
-
-        console.log(req);
-        res.send('yep');
-
-    },
-
     model: function (req, res, next) {
 
         AppData.findOne({appName: req.param('appName')})
             .then(function (appData) {
 
-                      appData = appData || {};
-                      res.json(appData);
-
+                      if (appData)
+                          res.json(appData);
+                      else
+                          res.notFound();
 
                   })
             .catch(function (err) {
@@ -35,6 +28,8 @@ module.exports = {
 
     subscribe: function (req, res) {
 
+        //TODO:  the filtering is done in the client optvAPI module for now, but this will
+        //need to be migrated here for Budweiser
         var app = req.param('appName');
 
         if (app) {
@@ -43,7 +38,7 @@ module.exports = {
                 .then(function (model) {
                           sails.log.debug("Subscribing " + req.socket.id + " to AppData model: " + model.id);
                           //Subscribe to this particular model instance
-                          AppData.subscribe(req, [ model.id ]);
+                          AppData.subscribe(req, [model.id]);
                           res.ok();
 
                       })
