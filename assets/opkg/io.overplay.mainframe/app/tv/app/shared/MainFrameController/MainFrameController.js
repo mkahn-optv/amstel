@@ -169,7 +169,7 @@ app.controller("mainFrameController", function ($scope, $timeout, $location, $lo
                        $log.info("MAINFRAME got message. Before $scope.apply()");
                        console.log("MAINFRAME got message. Before $scope.apply(). console.log.");
 
-                       $scope.$apply(function () {
+                       //$scope.$apply(function () {
 
                            $log.info("MAINFRAME got message. Before $scope.apply()");
 
@@ -301,7 +301,7 @@ app.controller("mainFrameController", function ($scope, $timeout, $location, $lo
 
 
                            }
-                       });
+                       //});
                    }
 
                    optvModel.init({

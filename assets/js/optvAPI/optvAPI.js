@@ -1,4 +1,4 @@
-/*********************************
+/****************************************************************************
 
  File:       optvAPI.js
  Function:   Provides an angular service wrapper for inter-app communication
@@ -6,13 +6,17 @@
  Date:       10/14/15 5:16 PM
  Author:     mkahn
 
- This is a preliminary version of an inter-app communications module (Angular Factory).
+ This version does both Websockets and Polling
 
- **********************************/
+ ****************************************************************************/
 
 
 angular.module('ngOpTVApi', [])
-    .factory('optvModel', function ($http, $log, $interval, $rootScope, $q) {
+    .factory('optvModel', function ($http, $log, $interval, $rootScope, $q, $timeout) {
+
+                 //For HTTP version
+                 var POLL_INTERVAL_MS = 100;
+                 var DEFAULT_METHOD = 'http';
 
                  var service = {model: {}};
 
@@ -25,9 +29,15 @@ angular.module('ngOpTVApi', [])
                  var _appName;
                  var _dbId;
                  var _initialValue;
+                 var _netMethod;
+
+                 //HTTP Mode stuff
+                 var appWatcher;
+                 var msgWatcher;
 
                  function logLead() {
-                     return "optvAPI (" + _appName + "): ";
+                     var ll = "optvAPI (" + _appName + "): ";
+                     return ll;
                  }
 
                  function setInitialAppDataValue() {
@@ -41,6 +51,22 @@ angular.module('ngOpTVApi', [])
                          $log.debug(logLead() + "io.posted initial value");
 
                      })
+
+                 }
+
+                 function setInitialAppDataValueHTTP() {
+
+                     service.model = _initialValue;
+                     $http.post('/api/v1/appdata', {
+                         appName: _appName,
+                         data: _initialValue
+                     })
+                         .then(function (data) {
+                                   $log.debug(logLead() + " initial value POSTed via HTTP.")
+                               },
+                               function (err) {
+                                   $log.debug(logLead() + " initial value POSTed via HTTP FAILED!!!!")
+                               });
 
                  }
 
@@ -85,6 +111,92 @@ angular.module('ngOpTVApi', [])
 
                  }
 
+                 function AppDataWatcher() {
+
+                     this.lastUpdated = new Date(0);
+                     this.running = true;
+
+                     var _this = this;
+
+                     function updateIfNewer(data) {
+
+                         $log.info(logLead()+" Checking if inbound data is newer");
+                         //TODO this isn't work right on chumby
+                         if (true){ //new Date(data.updatedAt) > _this.lastUpdated) {
+                             service.model = data.data;
+                             _dataCb(service.model);
+                         }
+
+                     }
+
+                     this.poll = function () {
+
+                         $timeout(function () {
+
+                             $http.get('/api/v1/AppData/model?appName=' + _appName)
+                                 .then(function (data) {
+                                           updateIfNewer(data.data);
+                                           if (_this.running) _this.poll();
+                                       },
+                                       function (err) {
+                                           $log.error(logLead() + " couldn't poll model!");
+                                           if (_this.running) _this.poll();
+                                       }
+                             );
+
+                         }, POLL_INTERVAL_MS);
+
+                     }
+                 }
+
+                 function MessageWatcher() {
+
+                     //start NOW, not in the past like Data
+                     this.lastUpdated = new Date().getTime();
+                     this.running = true;
+
+                     var _this = this;
+
+                     function updateIfNewer(data) {
+
+                         if (new Date(data.updatedAt) > _this.lastUpdated) {
+                             service.model = data.data;
+                             _dataCb(service.model);
+                         }
+
+                     }
+
+                     this.poll = function () {
+
+                         $timeout(function () {
+
+                             var currentTime = new Date().getTime();
+                             var ago = currentTime - _this.lastUpdated;
+                             var qstring = "?ago=" + ago + "&dest=" + _appName;
+                             _this.lastUpdated = currentTime;
+
+                             $http.get('/api/v1/appmessage/getnext' + qstring)
+                                 .then(function (data) {
+                                           var msgs = data.data;
+                                           //$log.info(logLead() + "received inbound messages: " + data.data);
+                                           msgs.forEach(function (msg) {
+                                                //This dup should go away once we clean everything up
+                                                msg.message = msg.messageData;
+                                               _msgCb(msg);
+                                           });
+                                           if (_this.running) _this.poll();
+                                       },
+                                       function (err) {
+                                           $log.error(logLead() + " couldn't poll messages!");
+                                           if (_this.running) _this.poll();
+                                       }
+                             );
+
+                         }, POLL_INTERVAL_MS);
+
+                     }
+                 }
+
 
                  function subscribeToGlobalRoom() {
 
@@ -94,7 +206,7 @@ angular.module('ngOpTVApi', [])
                      });
 
                      io.socket.on('intra-app-msg', function (obj) {
-                         $log.info(logLead + "Intra app message came in.")
+                         $log.info(logLead() + "Intra app message came in.")
                          handleIntraAppMessage(obj);
                      });
 
@@ -103,13 +215,13 @@ angular.module('ngOpTVApi', [])
                  function handleIntraAppMessage(obj) {
 
                      //Lots of log messages while debugging the WS implementation
-                     $log.info(logLead + "SocketIO message inbound to optvAPI for app: " + _appName);
-                     $log.info(logLead + "SocketIO message destination: " + obj.dest);
-                     $log.info(logLead + "SocketIO message will be relayed? " + (obj.dest == _appName));
+                     $log.info(logLead() + "SocketIO message inbound to optvAPI for app: " + _appName);
+                     $log.info(logLead() + "SocketIO message destination: " + obj.dest);
+                     $log.info(logLead() + "SocketIO message will be relayed? " + (obj.dest == _appName));
                      $log.info(angular.toJson(obj, true));
 
                      if (obj.dest == _appName) {
-                         $log.info(logLead + "optvAPI making message callback to " + _appName);
+                         $log.info(logLead() + "optvAPI making message callback to " + _appName);
                          _msgCb(obj);
                      }
 
@@ -138,95 +250,172 @@ angular.module('ngOpTVApi', [])
                      _dataCb = params.dataCallback;
                      _msgCb = params.messageCallback;
                      _initialValue = params.initialValue || {};
+                     _netMethod = params.netMethod || DEFAULT_METHOD;
 
                      $log.debug("optvAPI init for app: " + _appName);
+                     $log.debug(logLead() + " using net method: " + _netMethod);
 
-                     if (_dataCb) {
+                     switch (_netMethod) {
 
-                         io.socket.get('/api/v1/AppData/model?appName=' + _appName, function (data, jwres) {
+                         case 'websockets':
 
-                             if (jwres.statusCode != 200) {
-                                 $log.info(logLead + " model data not in DB, creating");
-                                 service.model = _initialValue;
-                                 setInitialAppDataValue();
+                             if (_dataCb) {
+
+                                 io.socket.get('/api/v1/AppData/model?appName=' + _appName, function (data, jwres) {
+
+                                     if (jwres.statusCode != 200) {
+                                         $log.info(logLead() + " model data not in DB, creating");
+                                         setInitialAppDataValue();
+                                     }
+                                     else {
+                                         $log.info(logLead() + " model data (appData) already existed.");
+                                         service.model = data.data;
+                                         _dbId = data.id;
+
+                                     }
+                                 });
+
+                                 //check if model already exists
+
+                                 //Commented out because Chumby browser sucks fat hariy dong
+
+                                 //loadModel()
+                                 //    .then(function (data) {
+                                 //              $log.info(logLead() + " model data (appData) already existed.");
+                                 //              service.model = data.data;
+                                 //              _dbId = data.id;
+                                 //          })
+                                 //    .catch(function (err) {
+                                 //               $log.info(logLead + " model data not in DB, creating");
+                                 //               service.model = _initialValue;
+                                 //               setInitialAppDataValue();
+                                 //           });
+
+                                 $log.debug("optvAPI init app: " + _appName + " subscribing to data");
+                                 subscribeToAppDataNotifications();
+
                              }
-                             else {
-                                 $log.info(logLead() + " model data (appData) already existed.");
-                                 service.model = data.data;
-                                 _dbId = data.id;
 
+                             //If a message cb is defined, subscribe
+                             if (_msgCb) {
+                                 $log.debug("optvAPI init app: " + _appName + " subscribing to messages");
+                                 subscribeToGlobalRoom();
                              }
-                         });
 
-                         //check if model already exists
 
-                         //Commented out because Chumby browser sucks fat hariy dong
+                             break;
 
-                         //loadModel()
-                         //    .then(function (data) {
-                         //              $log.info(logLead() + " model data (appData) already existed.");
-                         //              service.model = data.data;
-                         //              _dbId = data.id;
-                         //          })
-                         //    .catch(function (err) {
-                         //               $log.info(logLead + " model data not in DB, creating");
-                         //               service.model = _initialValue;
-                         //               setInitialAppDataValue();
-                         //           });
+                         case 'http':
 
-                         $log.debug("optvAPI init app: " + _appName + " subscribing to data");
-                         subscribeToAppDataNotifications();
+                             if (_dataCb) {
+
+                                 $http.get('/api/v1/AppData/model?appName=' + _appName)
+                                     .then(function (data) {
+                                               $log.info(logLead() + " model data (appData) already existed via http.");
+                                               service.model = data.data.data;
+                                               _dbId = data.data.id;
+                                           },
+                                     //Chumby browser doesn't seem to like "catch" in some places.
+                                           function (err) {
+                                               $log.info(logLead() + " model data not in DB, creating via http");
+                                               setInitialAppDataValueHTTP();
+                                           });
+
+                                 $log.debug("optvAPI init app: " + _appName + " subscribing to data");
+
+                                 appWatcher = new AppDataWatcher();
+                                 appWatcher.poll();
+                             }
+
+                             if (_msgCb) {
+
+                                 msgWatcher = new MessageWatcher();
+                                 msgWatcher.poll();
+                             }
+
+
+                             break;
+
 
                      }
 
-                     //If a message cb is defined, subscribe
-                     if (_msgCb) {
-                         $log.debug("optvAPI init app: " + _appName + " subscribing to messages");
-                         subscribeToGlobalRoom();
-                     }
 
                  }
 
                  service.save = function () {
 
-                     return $q(function (resolve, reject) {
+                     switch (_netMethod) {
 
-                         io.socket.put('/api/v1/AppData/' + _dbId, {data: service.model},
-                                       function (data, jwres) {
+                         case 'websockets':
 
-                                           if (jwres.statusCode != 200)
-                                               reject(jwres);
-                                           else
-                                               resolve(data);
-                                       });
+                             return $q(function (resolve, reject) {
 
-                     });
+                                 io.socket.put('/api/v1/AppData/' + _dbId, {data: service.model},
+                                               function (data, jwres) {
 
-                 };
-
-                 service.postMessage = function (msg) {
-
-                     return $q(function (resolve, reject) {
-
-                         //TODO remove 'to' throughout all apps...for now just or it.
-                         var dest = msg.dest || msg.to || "io.overplay.mainframe";
-
-                         if (dest && msg.data) {
-                             var message = {dest: msg.to, message: msg.data, from: _appName};
-                             io.socket.post('/api/v1/ws/shout', message, function (data, jwres) {
-
-                                 if (jwres.statusCode != 200) {
-                                     reject(jwres);
-                                 } else {
-                                     resolve(data);
-                                 }
+                                                   if (jwres.statusCode != 200)
+                                                       reject(jwres);
+                                                   else
+                                                       resolve(data);
+                                               });
 
                              });
 
-                         } else {
-                             reject("Missing params");
-                         }
-                     })
+                             break;
+
+                         case 'http':
+
+                             return $http.put('/api/v1/AppData/' + _dbId, {data: service.model});
+
+                             break;
+                     }
+
+                 }
+
+
+                 service.postMessage = function (msg) {
+
+                     switch (_netMethod) {
+
+                         case 'websockets':
+
+                             return $q(function (resolve, reject) {
+
+                                 //TODO remove 'to' throughout all apps...for now just or it.
+                                 var dest = msg.dest || msg.to || "io.overplay.mainframe";
+
+                                 if (dest && msg.data) {
+                                     var message = {dest: msg.to, message: msg.data, from: _appName};
+                                     io.socket.post('/api/v1/ws/shout', message, function (data, jwres) {
+
+                                         if (jwres.statusCode != 200) {
+                                             reject(jwres);
+                                         } else {
+                                             resolve(data);
+                                         }
+
+                                     });
+
+                                 } else {
+                                     reject("Missing params");
+                                 }
+                             });
+
+
+                             break;
+
+
+                         case 'http':
+
+                            //TODO remove 'to' throughout all apps...for now just or it.
+                             var dest = msg.dest || msg.to || "io.overplay.mainframe";
+
+                             return $http.post('/api/v1/appmessage', { dest: dest, from: _appName, messageData: msg.data});
+
+                             break;
+
+
+                     }
 
 
                  }
@@ -234,5 +423,6 @@ angular.module('ngOpTVApi', [])
 
                  return service;
 
-             })
+             }
+)
 

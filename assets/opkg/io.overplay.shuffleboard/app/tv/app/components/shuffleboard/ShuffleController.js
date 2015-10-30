@@ -48,12 +48,12 @@ app.controller("shuffleController",
                    }
 
                    function modelUpdate(data) {
-                       $scope.$apply(function () {
-
+                       //$scope.$apply(function () {
+                            $log.info(logLead()+" got a model update: "+ angular.toJson(data));
                            _remoteScore = data;
                            updateLocalScore();
 
-                       });
+                       //});
 
                        $log.debug(logLead() + "Model update callback...")
 
