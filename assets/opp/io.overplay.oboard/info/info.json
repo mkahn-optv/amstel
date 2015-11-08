@@ -1,0 +1,11 @@
+{
+  "appType": "partial",
+  "name": "Darts",
+  "reverseDomainName": "io.overplay.shuffleboard",
+  "buildNumber": 1,
+  "signature": "",
+  "iconLabel": "Shuffleboard",
+  "iconImageLarge": "shuffle320x180.png",
+  "publisher": "Overplay TV, Inc.",
+  "show": true
+}

@@ -13,7 +13,7 @@ module.exports.stockapps = {
             buildNumber: 1,
             onLauncher: false,
             isMain: true,
-            currentFrame: {"top": "0", "left": "0", "width": "100", "height": "100"},
+            size: { width: 100, height: 100 },
             publisher: "overplay.io"
         },
         {
@@ -24,7 +24,7 @@ module.exports.stockapps = {
             onLauncher: true,
             iconLauncher: 'shuffle320x180.png',
             publisher: "overplay.io",
-            currentFrame: {"top": "0", "left": "0", "width": "25", "height": "40"},
+            size: { width: 25, height: 40 }
         },
         {
             name: "Daily Specials",
@@ -34,7 +34,7 @@ module.exports.stockapps = {
             onLauncher: true,
             iconLauncher: 'special16x9.png',
             publisher: "overplay.io",
-            currentFrame: {"top": "0", "left": "0", "width": "100", "height": "10"}
+            size: { "width": 100, "height": 10 }
         },
         {
             name: "Squares",
@@ -44,7 +44,7 @@ module.exports.stockapps = {
             onLauncher: true,
             iconLauncher: 'football16x9.png',
             publisher: "overplay.io",
-            currentFrame: {"top": "0", "left": "0", "width": "25", "height": "40"},
+            size: { "width": 25, "height": 40}
         }
 
 

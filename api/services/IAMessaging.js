@@ -1,3 +1,8 @@
+/*** DEPRECATED (for now) ***/
+
+// Messaging now handled by AppMessage //
+
+
 /*********************************
 
  File:       IAMessaging.js

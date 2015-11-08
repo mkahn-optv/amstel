@@ -1,0 +1,71 @@
+<!DOCTYPE html>
+<html ng-app="optvMainFrameApp">
+<head lang="en">
+  <meta charset="UTF-8">
+
+  <meta http-equiv="X-UA-Compatible" content="IE=edge">
+  <meta name="viewport" content="width=device-width, initial-scale=1">
+
+  <!-- Not needed as long as we don't use websockets -->
+  <!--<script src="/js/dependencies/sails.io.js"></script>-->
+
+  <!--<script src="assets/bower_components/jquery/dist/jquery.min.js"></script>-->
+  <script src="assets/bower_components/angular/angular.js"></script>
+  <script src="assets/bower_components/angular-route/angular-route.js"></script>
+  <script src="assets/bower_components/angular-animate/angular-animate.min.js"></script>
+  <script src="assets/bower_components/angular-sanitize/angular-sanitize.js"></script>
+  <script src="assets/bower_components/lodash/lodash.js"></script>
+  <script src="assets/bower_components/angular-toastr/dist/angular-toastr.tpls.js"></script>
+
+
+  <!-- App Main and AngularJS Routes -->
+  <script src="app/optvMainFrameApp.module.js"></script>
+  <script src="app/optvMainFrameApp.routes.js"></script>
+
+  <script src="/js/optvAPI/optvAPI.js"></script>
+
+  <!-- Controllers -->
+  <script src="app/MainFrameController/MainFrameController.js"></script>
+
+  <!-- in here in case we need it -->
+  <link href="assets/bower_components/angular-toastr/dist/angular-toastr.css" rel="stylesheet">
+
+  <!-- App Specific and Overridden CSS -->
+  <link href="assets/css/styles.css" rel="stylesheet">
+
+  <title>OPTV Amstel Mainframe</title>
+</head>
+
+<body ng-controller="mainFrameController" ng-keypress="keyPressed($event)" id="docbody" ng-click="keyPressed('center')">
+
+<!-- array of launched apps -->
+
+<iframe ng-repeat="app in clientApps" src="{{app.src}}"
+        ng-style="getAppFrame($index)"
+        class="app-iframe hide-fade" ng-show="app.show"></iframe>
+
+
+<!-- Old version that limited to widgets and crawlers
+<iframe ng-repeat="app in widgetApps" src="{{app.src}}"
+        ng-style="{ 'top': app.currentFrame.top, 'left': app.currentFrame.left,
+      'width': app.currentFrame.width, 'height': app.currentFrame.height }"
+        class="app-iframe hide-fade" ng-show="app.show"></iframe>
+
+<iframe ng-repeat="app in crawlerApps" src="{{app.src}}"
+        ng-style="{ 'top': app.currentFrame.top, 'left': app.currentFrame.left,
+      'width': app.currentFrame.width, 'height': app.currentFrame.height }"
+        class="app-iframe hide-fade" ng-show="app.show"></iframe>
+-->
+<!-- Launcher -->
+
+
+<iframe src="{{launcher.src}}"
+        class="launcher-iframe" ng-class="{'launcher-offscreen': !uiState.showAppPicker}"></iframe>
+
+<div class="debugbox">{{windowDimension.text}}
+  <!-- <div class="hdmessage">1080p</div> -->
+  <!--<br><button ng-click="buttonPushed('down')">DOWN V</button>-->
+</div>
+
+</body>
+</html>

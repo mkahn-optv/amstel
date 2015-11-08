@@ -130,14 +130,6 @@ module.exports = {
          */
 
         legitRDN: isReverseDomainNameLike
-    },
-
-    systemState: {
-
-        runningWidgets: [],
-        runningCrawlers: []
-
     }
-
 
 }

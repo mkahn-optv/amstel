@@ -1,0 +1,65 @@
+<!DOCTYPE html>
+<html ng-app="optvUIApp">
+<head lang="en">
+  <meta charset="UTF-8">
+
+  <meta http-equiv="X-UA-Compatible" content="IE=edge">
+  <meta name="viewport" content="width=device-width, initial-scale=1">
+
+  <script src="/js/dependencies/sails.io.js"></script>
+  <!--<script src="assets/bower_components/jquery/dist/jquery.min.js"></script>-->
+  <script src="assets/bower_components/angular/angular.js"></script>
+  <script src="assets/bower_components/angular-route/angular-route.js"></script>
+  <script src="assets/bower_components/angular-animate/angular-animate.min.js"></script>
+  <script src="assets/bower_components/angular-sanitize/angular-sanitize.js"></script>
+  <script src="assets/bower_components/lodash/lodash.js"></script>
+  <script src="assets/bower_components/angular-toastr/dist/angular-toastr.tpls.js"></script>
+
+
+  <!-- App Main and AngularJS Routes -->
+  <script src="app/optvUIApp.module.js"></script>
+  <script src="app/optvUIApp.routes.js"></script>
+  <script src="/js/optvAPI/optvAPI.js"></script>
+
+  <!-- Controllers -->
+  <script src="app/shared/RootController/RootController.js"></script>
+
+
+  <!-- Directives -->
+  <script src="app/components/UIDirectives/AppIcon/appicon.directive.js"></script>
+
+
+  <link href="assets/bower_components/animate.css/animate.css" rel="stylesheet">
+
+
+  <!--<link href="assets/css/style.css" rel="stylesheet">-->
+  <link href="assets/bower_components/angular-toastr/dist/angular-toastr.css" rel="stylesheet">
+  <link href='http://fonts.googleapis.com/css?family=Dosis:300,400' rel='stylesheet' type='text/css'>
+
+
+  <!-- App Specific and Overridden CSS -->
+  <!--<link href="assets/css/style.css" rel="stylesheet">-->
+  <link href="assets/css/styles.css" rel="stylesheet">
+
+
+  <title>OPTV App Picker</title>
+</head>
+
+<body ng-controller="rootController" ng-keypress="keyPressed($event)" id="docbody" ng-click="toggleUI()">
+
+
+<div class="icon-tray">
+
+  <div class="logo"><img class="pop-screen" src="assets/img/optvlogo100.png"/></div>
+  <div class="icon-scroller">
+    <app-icon ng-repeat="a in apps" icon-src="{{a.launcherIconPath}}" app-name="{{a.name}}"
+              selected="isSelected($index)"
+              ng-click="clicked(a)"
+              ></app-icon>
+  </div>
+
+
+</div>
+
+</body>
+</html>
