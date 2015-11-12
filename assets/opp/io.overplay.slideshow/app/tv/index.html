@@ -1,0 +1,45 @@
+<!DOCTYPE html>
+<html ng-app="optvSlideshowApp">
+<head lang="en">
+    <meta charset="UTF-8">
+
+    <meta http-equiv="X-UA-Compatible" content="IE=edge">
+    <meta name="viewport" content="width=device-width, initial-scale=1">
+    <script src="/js/dependencies/sails.io.js"></script>
+
+    <!--<script src="assets/bower_components/jquery/dist/jquery.min.js"></script>-->
+    <script src="assets/bower_components/angular/angular.js"></script>
+    <script src="assets/bower_components/angular-animate/angular-animate.min.js"></script>
+    <script src="assets/bower_components/lodash/lodash.js"></script>
+
+
+    <!-- App Main and AngularJS Routes -->
+    <script src="app/optvSlideshowApp.module.js"></script>
+    <script src="/js/optvAPI/optvAPI.js"></script>
+
+    <!-- Controllers -->
+    <script src="app/components/SlideshowController.js"></script>
+
+
+    <!-- Directives -->
+
+    <!--<link href="assets/css/style.css" rel="stylesheet">-->
+    <link href='http://fonts.googleapis.com/css?family=Dosis:300,400' rel='stylesheet' type='text/css'>
+
+
+    <!-- App Specific and Overridden CSS -->
+    <!--<link href="assets/css/style.css" rel="stylesheet">-->
+    <link href="assets/css/styles.css" rel="stylesheet">
+
+
+    <title>OPTV Slideshow</title>
+</head>
+
+<body ng-controller="slideshowController" ng-keypress="keyPressed($event)" ng-click="goLauncher()">
+
+<div class="slide-holder">
+    <img ng-src="{{slide}}"/>
+</div>
+
+</body>
+</html>

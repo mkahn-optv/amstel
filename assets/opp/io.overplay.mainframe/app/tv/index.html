@@ -23,6 +23,7 @@
   <script src="app/optvMainFrameApp.routes.js"></script>
 
   <script src="/js/optvAPI/optvAPI.js"></script>
+  <script src="app/OPTVOSService/OPTVOSService.js"></script>
 
   <!-- Controllers -->
   <script src="app/MainFrameController/MainFrameController.js"></script>
@@ -40,9 +41,12 @@
 
 <!-- array of launched apps -->
 
-<iframe ng-repeat="app in clientApps" src="{{app.src}}"
-        ng-style="getAppFrame($index)"
-        class="app-iframe hide-fade" ng-show="app.show"></iframe>
+<div class="appholder hide-fade" ng-show="!launcher.show">
+    <iframe ng-repeat="app in clientApps" src="{{app.src}}"
+            ng-style="app.location"
+            ng-class="app.app.appType"></iframe>
+</div>
+
 
 
 <!-- Old version that limited to widgets and crawlers
@@ -59,10 +63,10 @@
 <!-- Launcher -->
 
 
-<iframe src="{{launcher.src}}"
-        class="launcher-iframe" ng-class="{'launcher-offscreen': !uiState.showAppPicker}"></iframe>
+<iframe src="{{launcher.app.src}}"
+        class="launcher-iframe" ng-class="{'launcher-offscreen': !launcher.show}"></iframe>
 
-<div class="debugbox">{{windowDimension.text}}
+<div class="debugbox">{{os.windowDimension.text}}
   <!-- <div class="hdmessage">1080p</div> -->
   <!--<br><button ng-click="buttonPushed('down')">DOWN V</button>-->
 </div>

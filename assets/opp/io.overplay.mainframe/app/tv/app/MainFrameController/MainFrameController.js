@@ -11,350 +11,181 @@
  **********************************/
 
 
-app.controller("mainFrameController", function ($scope, $timeout, $location, $log, $rootScope, $http, $window, optvModel) {
+app.controller( "mainFrameController", function ( $scope, $timeout, $location, $log, $rootScope, $http, $window, optvModel, osService ) {
 
-                   console.log("Loading mainFrameController");
+        console.log( "Loading mainFrameController" );
+        $log.info( "osService SERVICE: " + osService.name );
 
-                   $scope.uiState = {showAppPicker: false};
+        $scope.launcher = { app: undefined, show: false };
 
-                   $scope.widgetApps = [];
-                   $scope.crawlerApps = [];
+        $scope.os = osService;
 
-                   $scope.lastMessage = "waiting...";
+        $scope.clientApps = osService.runningApps;
 
+        var logLead = "MFController: ";
 
-                   $scope.keyPressed = function (event) {
 
-                       $log.info("Keyboard button pressed: " + event.which);
+        // For on-Mac testing
+        $scope.keyPressed = function ( event ) {
 
-                   }
+            $log.info( "Keyboard button pressed: " + event.which );
 
-                   function showApps(shouldShow) {
-                       //TODo Sequencing animation? Should be done by position on screen, not array position...
+        }
 
-                       $log.warn("SHOWING APPS: " + shouldShow);
-                       $scope.widgetApps.forEach(function (a) {
-                           a.show = shouldShow;
-                       })
 
-                       $scope.crawlerApps.forEach(function (a) {
-                           a.show = shouldShow;
-                       })
-                   }
+        function showAppPicker( shouldShow ) {
 
-                   function showAppPicker(shouldShow) {
+            $scope.launcher.show = shouldShow;
 
-                       $scope.uiState.showAppPicker = shouldShow;
+        }
 
-                       //if (shouldShow) {
-                       //    $log.debug("Auto-dismissing app picker");
-                       //    $timeout(function () { showAppPicker(false); }, 6000 * 3);
-                       //}
-                   }
+        function toggleAppPicker() {
 
-                   function toggleAppPicker() {
+            $scope.launcher.show = !$scope.launcher.show;
 
-                       $scope.uiState.showAppPicker = !$scope.uiState.showAppPicker;
-                       showApps(!$scope.uiState.showAppPicker);
+        }
 
-                   }
+        function showApps( shouldShow ){
 
-                   $scope.buttonPushed = function (netvButton) {
+            $scope.launcher.show = !shouldShow;
 
-                       /*
-                        Buttons are: 'widget', 'cpanel', 'up', 'down', 'left', 'right', 'center'
-                        */
-                       $log.info("NeTV remote pressed: " + netvButton);
+        }
 
+        // This call is used from outside Angular, requires $apply
+        $scope.buttonPushed = function ( netvButton ) {
+            $scope.$apply( function () {
+                buttonPushed( netvButton );
+            } )
+        }
 
-                       //$scope.$apply(function () {
+        // Called from inside Angular by messages simulating IR remote
+        //
+        // Buttons are: 'widget', 'cpanel', 'up', 'down', 'left', 'right', 'center'
+        //
+        function buttonPushed( netvButton ) {
 
-                       switch (netvButton) {
+            $log.info( "NeTV remote pressed: " + netvButton );
+            switch ( netvButton ) {
+                case 'widget':
+                    $log.info( "Widget button pressed" );
+                    toggleAppPicker();
+                    break;
 
-                           case 'widget':
-                               $log.info("Widget button pressed");
-                               toggleAppPicker();
-                               break;
+                case 'left':
+                case 'right':
+                case 'center':
+                case 'cpanel':
+                case 'up':
+                case 'down':
+                    //Relay everything other than show/hide picker to the picker
+                    optvModel.postMessage( { to: "io.overplay.apppicker", data: { remote: netvButton } } );
+                    break;
+                default:
+                    break;
 
-                           case 'left':
-                           case 'right':
-                           case 'center':
-                           case 'cpanel':
-                           case 'up':
-                           case 'down':
-                               optvModel.postMessage({to: "io.overplay.apppicker", data: {remote: netvButton}});
-                               break;
-                           default:
-                               break;
+            }
 
-                       }
+        }
 
-                       //})
 
+        /*
+         Move messages need to be like this for now:
+         { "to":"io.overplay.mainframe", "from":"io.overplay.shuffleboard", "data":{ "move": { "spot" : "tl" }}}
+         */
 
-                   }
+        function inboundMessageMain( m ) {
 
-                   /**
-                    * Does the 'vw' style to 'px' mapping a modern browser would do for us, sigh...
-                    * @param pctg
-                    */
-                   function convertToPx(pctg, val) {
+            $log.info( "Mainframe received message: " + angular.toJson( m ) );
+            $scope.lastMessage = angular.toJson( m );
 
-                       var int = parseInt(pctg.replace(/v[w,h]/, ""));
-                       return Math.floor((int / 100) * val) + "px";
-                   }
 
-                   var widgetLocations = ['tl', 'tr', 'br', 'bl'];
-                   var crawlerLocations = ['bottom', 'top'];
+            if ( m.message && m.message.layout ) {
 
-                   function moveWidgetToSpot(app, spot) {
+                $log.info( logLead + "received LAYOUT message" );
+                osService.getAppMap()
+                    .then( function ( apps ) {
+                        $scope.clientApps = osService.runningApps;
+                    }, function ( err ) {
+                        $log.error( logLead + " error fetching AppMap. Error: "+ angular.toJson(err) );
+                    } );
 
-                       switch (spot) {
+                //Give the app picker some time to hide
+                $timeout( function () {
+                    $log.debug( "Delayed show of apps" );
+                    showApps( true );
+                }, 250 );
 
-                           case 'tl':
-                               app.currentFrame.top = .05 * $scope.windowDimension.height + 'px';
-                               app.currentFrame.left = .03 * $scope.windowDimension.width + 'px';
-                               break;
+            }
 
-                           case 'tr':
-                               app.currentFrame.top = .05 * $scope.windowDimension.height + 'px';
-                               app.currentFrame.left = .85 * $scope.windowDimension.width + 'px';
-                               break;
 
-                           case 'bl':
-                               app.currentFrame.top = .6 * $scope.windowDimension.height + 'px';
-                               app.currentFrame.left = .03 * $scope.windowDimension.width + 'px';
-                               break;
+            //TODO this is all kind of bullshot with the new app holder frame.
+            //Show Dash
+            if ( m.message && m.message.dash ) {
 
-                           case 'br':
-                               app.currentFrame.top = .6 * $scope.windowDimension.height + 'px';
-                               app.currentFrame.left = .85 * $scope.windowDimension.width + 'px';
-                               break;
+                switch ( m.message.dash ) {
 
-                       }
+                    case 'show':
+                        showApps( false );
+                        $timeout( function () { showAppPicker( true ); }, 1500 );
+                        break;
 
-                       app.spot = spot;
+                    case 'hide':
+                        showAppPicker( false );
+                        $timeout( function () { showApps( true ); }, 1500 );
+                        break;
 
-                   }
+                    case 'toggle':
+                        //TODO sequencing
+                        toggleAppPicker();
+                        break;
 
-                   function moveCrawlerToSpot(app, spot) {
+                }
+            }
 
-                       switch (spot) {
+            //TODO this should be a case statement
+            //Show Dash
+            if ( m.message && m.message.remote ) {
 
-                           case 'bottom':
-                               app.currentFrame.top = .85 * $scope.windowDimension.height + 'px';
-                               app.currentFrame.left = 0 * $scope.windowDimension.width + 'px';
-                               break;
+                switch ( m.message.remote ) {
 
-                           case 'top':
-                               app.currentFrame.top = .05 * $scope.windowDimension.height + 'px';
-                               app.currentFrame.left = 0.0 * $scope.windowDimension.width + 'px';
-                               break;
+                    case 'up':
+                        $scope.buttonPushed( 'up' );
+                        break;
 
-                       }
-                       app.spot = spot;
+                    case 'down':
+                        $scope.buttonPushed( 'down' );
+                        break;
 
-                   }
+                    case 'select':
+                        $scope.buttonPushed( 'center' );
+                        break;
 
-                   /*
 
-                    Move messages need to be like this for now:
+                }
 
-                    { "to":"io.overplay.mainframe", "from":"io.overplay.shuffleboard", "data":{ "move": { "spot" : "tl" }}}
 
-                    */
+            }
 
-                   function inboundMessageMain(m) {
+        }
 
-                       $log.info("MAINFRAME got message. Before $scope.apply()");
-                       console.log("MAINFRAME got message. Before $scope.apply(). console.log.");
+        optvModel.init( {
+            appName:         "io.overplay.mainframe",
+            messageCallback: inboundMessageMain
+        } );
 
-                       //$scope.$apply(function () {
+        function setLauncher( app ) {
+            $scope.launcher.app = app;
+            showAppPicker(true);
+        }
 
-                       $log.info("MAINFRAME got message. Before $scope.apply()");
+        osService.getLauncher()
+            .then( setLauncher )
+            .catch( function ( err ) {
+                $log.error( "MFController: major error, no app launcher!! " + err );
+            } );
 
-                       $log.info("Mainframe received message: " + m);
-                       $scope.lastMessage = angular.toJson(m);
-                       //Launch
-                       if (m.message && m.message.launch) {
 
-                           //Check and see if this app is already running
-                           var app = m.message.launch;
-                           $log.info("Request to launch: " + app.reverseDomainName + " received by MAINFRAME");
-                           app.src = '/opkg/' + app.reverseDomainName + '/app/tv/';
-                           app.show = false;
-
-                           //Scale the width and height by measured. Old browser does not support vw, vh correctly.
-                           app.currentFrame.height = (app.currentFrame.height / 100 * $scope.windowDimension.height) + 'px';
-                           app.currentFrame.width = (app.currentFrame.width / 100 * $scope.windowDimension.width) + 'px';
-
-
-                           switch (app.appType) {
-
-                               case 'widget':
-                                   //Check if running already
-                                   var idx = _.findIndex($scope.widgetApps, function (running) {
-                                       return app.reverseDomainName = running.reverseDomainName;
-                                   });
-
-                                   if (idx < 0) {
-                                       $scope.widgetApps.push(app);
-                                       if ($scope.widgetApps.length > 4) {
-                                           $scope.widgetApps = $scope.widgetApps.slice(1, 4);
-                                       }
-
-                                       for (var i = 0; i < $scope.widgetApps.length; i++) {
-                                           moveWidgetToSpot($scope.widgetApps[i], widgetLocations[i]);
-                                       }
-                                   }
-
-                                   break;
-
-                               case 'crawler':
-                                   //Check if running already
-                                   var idx = _.findIndex($scope.widgetApps, function (running) {
-                                       return app.reverseDomainName = running.reverseDomainName;
-                                   });
-
-                                   if (idx < 0) {
-                                       $scope.crawlerApps.push(app);
-                                       if ($scope.crawlerApps.length > 2) {
-                                           $scope.crawlerApps = $scope.crawlerApps.slice(1, 2);
-                                       }
-
-                                       for (var i = 0; i < $scope.crawlerApps.length; i++) {
-                                           moveCrawlerToSpot($scope.crawlerApps[i], crawlerLocations[i]);
-                                       }
-                                   }
-                                   break;
-
-                           }
-
-
-                           $http.post('/api/v1/setrunning', {
-                               crawlers: $scope.crawlerApps,
-                               widgets: $scope.widgetApps
-                           });
-                           showAppPicker(false);
-                           //Give the app picker some time to hide
-                           $timeout(function () {
-                               $log.debug("Delayed show of apps");
-                               showApps(true);
-                           }, 250);
-
-                       }
-
-                       //Kill
-                       if (m.message && m.message.kill) {
-
-                           $scope.runningApps = _.remove($scope.runningApps, function (app) {
-                               return app.reverseDomainName == m.message.kill.reverseDomainName;
-                           })
-                       }
-
-                       //Move
-                       //TODO does not work (will crash) for crawlers
-                       if (m.message && m.message.move) {
-
-                           var spot = m.message.move.spot;
-                           var appToMove = m.message.move.app;
-
-
-                           var app = _.find($scope.widgetApps, function (a) {
-                               return appToMove = a.reverseDomainName;
-                           });
-
-                           if (spot == 'next') {
-                               //request to cycle this app
-                               var currentSpot = app.spot;
-                               var spotIdx = widgetLocations.indexOf(currentSpot);
-                               spotIdx++;
-                               if (spotIdx > widgetLocations.length) spotIdx = 0;
-                               spot = widgetLocations[spotIdx];
-                           }
-                           moveWidgetToSpot(app, spot);
-
-                       }
-
-                       //TODO this should be a case statement
-                       //Show Dash
-                       if (m.message && m.message.dash) {
-
-                           switch (m.message.dash) {
-
-                               case 'show':
-                                   showApps(false);
-                                   $timeout(function () { showAppPicker(true); }, 1500);
-                                   break;
-
-                               case 'hide':
-                                   showAppPicker(false);
-                                   $timeout(function () { showApps(true); }, 1500);
-                                   break;
-
-                               case 'toggle':
-                                   //TODO sequencing
-                                   toggleAppPicker();
-                                   break;
-
-                           }
-                       }
-
-                       //TODO this should be a case statement
-                       //Show Dash
-                       if (m.message && m.message.remote) {
-
-                           switch (m.message.remote) {
-
-                               case 'up':
-                                   $scope.buttonPushed('up');
-                                   break;
-
-                               case 'down':
-                                   $scope.buttonPushed('down');
-                                   break;
-
-                               case 'select':
-                                   $scope.buttonPushed('center');
-                                   break;
-
-
-                           }
-
-
-                       }
-
-                   }
-
-                   optvModel.init({
-                       appName: "io.overplay.mainframe",
-                       messageCallback: inboundMessageMain
-                   });
-
-                   //Load the main app
-                   $http.get('/api/v1/apps?isMain=true')
-                       .then(function (data) {
-                                 $scope.launcher = data.data[0];
-                                 $scope.launcher['src'] = '/opkg/' + $scope.launcher.reverseDomainName + '/app/tv/index.html';
-                                 $scope.launcher.currentFrame.height = convertToPx($scope.launcher.currentFrame.height, $scope.windowDimension.height);
-                                 $scope.launcher.currentFrame.width = convertToPx($scope.launcher.currentFrame.width, $scope.windowDimension.width);
-
-                                 $timeout(function () { showAppPicker(true) }, 500);
-                             })
-
-
-                   $scope.$watch(function () {
-                       return window.innerWidth;
-                   }, function (value) {
-                       console.log(window.innerWidth + ' x ' + window.innerHeight);
-                       $scope.windowDimension = {
-                           text: window.innerWidth + ' x ' + window.innerHeight,
-                           width: window.innerWidth,
-                           height: window.innerHeight
-                       }
-                   });
-
-               }
+    }
 )
 ;
 

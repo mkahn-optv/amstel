@@ -63,14 +63,19 @@ module.exports = {
             type: 'string'
         },
 
-        initialFrame: {
+        size: {
             type: 'json',
-            defaultsTo: { "top": "5vh", "left": "3vw", "width": "15vw", "height": "30vh" }
+            defaultsTo: { "top": 0, "left": 0 }
         },
 
         currentFrame: {
             type: 'json',
-            defaultsTo: { "top": "5vh", "left": "3vw", "width": "15vw", "height": "30vh" }
+            defaultsTo: { "top": 0, "left": 0, "width": 0, "height": 0 }
+        },
+
+        slotNumber: {
+            type: 'integer',
+            defaultsTo: 0
         },
 
         lastUsed: {
@@ -78,10 +83,15 @@ module.exports = {
             defaultsTo: 0
         },
 
+        running: {
+            type: "boolean",
+            defaultsTo: false
+        },
+
         toJSON: function () {
 
             var app = this.toObject();
-            app.launcherIconPath = '/opkg/' + app.reverseDomainName + '/assets/icons/' + app.iconLauncher;
+            app.launcherIconPath = '/opp/' + app.reverseDomainName + '/assets/icons/' + app.iconLauncher;
             return app;
 
         }

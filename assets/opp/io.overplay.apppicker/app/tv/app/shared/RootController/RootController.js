@@ -81,11 +81,9 @@ app.controller("rootController", function ($scope, $timeout, $location, $log, $r
 
     $scope.clicked = function (app) {
         $log.info("Clicked on: " + app.reverseDomainName);
-        optvModel.postMessage({
-            to: "io.overplay.mainframe", data: {launch: app}
-        });
+        optvModel.launchApp( app.reverseDomainName );
 
-    }
+    };
 
     function inboundMessage(msg) {
         $log.info("Inbound message..to APPPICKER");

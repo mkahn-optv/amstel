@@ -37,6 +37,16 @@ module.exports.stockapps = {
             size: { "width": 100, "height": 10 }
         },
         {
+            name:              "Slideshow",
+            appType:           "fullscreen",
+            reverseDomainName: "io.overplay.slideshow",
+            buildNumber:       1,
+            onLauncher:        true,
+            iconLauncher:      'slideshow320x180.png',
+            publisher:         "overplay.io",
+            size:              { "width": 100, "height": 100 }
+        },
+        {
             name: "Squares",
             appType: "widget",
             reverseDomainName: "io.overplay.squares",
@@ -44,7 +54,7 @@ module.exports.stockapps = {
             onLauncher: true,
             iconLauncher: 'football16x9.png',
             publisher: "overplay.io",
-            size: { "width": 25, "height": 40}
+            size: { "width": 25, "height": 40 }
         }
 
 

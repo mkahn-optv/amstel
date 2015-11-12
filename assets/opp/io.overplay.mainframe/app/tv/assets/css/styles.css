@@ -8,6 +8,7 @@
     src: url('../fonts/Dosis-ExtraBold.ttf');
 }
 
+
 @font-face {
     font-family: "Clean";
     src: url('/styles/fonts/OpenSans-Light.ttf');
@@ -26,16 +27,29 @@ html {
 
 body {
     margin: 0;
-    aabackground-color: #8ef058;
     font-family: 'Clean', sans-serif;
 
 }
 
-.app-iframe {
+.widget {
     position: fixed;
     border: 0;
-    transition: top 2s ease, left 2s ease;
-    -webkit-transition: top 2s ease, left 2s ease;
+    width: 200px;
+    height: 400px;
+}
+
+.crawler {
+    position: fixed;
+    border: 0;
+    width: 100%;
+    height: 90px;
+}
+
+.fullscreen {
+    position: fixed;
+    border: 0;
+    width: 100%;
+    height: 100%;
 }
 
 .launcher-iframe {
@@ -49,6 +63,7 @@ body {
     border: 0;
 
 }
+
 .hide-fade {
     -webkit-transition: opacity linear .3s;
     -moz-transition: opacity linear .3s;
@@ -78,7 +93,7 @@ body {
 /* 4:3 SDTV should just print "BUY A NEW FUCKING TV */
 @media screen and (max-width: 720px) and (max-height: 480px) {
 
-.launcher-offscreen {
+    .launcher-offscreen {
         left: -300px !important;
     }
 }
@@ -91,13 +106,12 @@ body {
     }
 
     .hdmessage {
-             opacity: 1;
-             color: #ff9acf;
-             font-size: 30px;
-             width: 100%;
-             text-align: right;
+        opacity: 1;
+        color: #ff9acf;
+        font-size: 30px;
+        width: 100%;
+        text-align: right;
     }
-
 
 }
 
@@ -105,6 +119,17 @@ body {
 .picker-iframe {
     border: 0px dashed transparent;
 }
+
+/* NEW for Rethought Mainframe (11-2015) */
+
+.appholder {
+    position: fixed;
+    top: 0;
+    left: 0;
+    width: 100%;
+    height: 100%;
+}
+
 
 
 

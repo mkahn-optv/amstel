@@ -1,0 +1,11 @@
+{
+  "appType": "fullscreen",
+  "name": "Slideshow",
+  "reverseDomainName": "io.overplay.slideshow",
+  "buildNumber": 1,
+  "signature": "",
+  "iconLabel": "Slideshow",
+  "iconImageLarge": "slideshow320x180.png",
+  "publisher": "Overplay TV, Inc.",
+  "show": true
+}
