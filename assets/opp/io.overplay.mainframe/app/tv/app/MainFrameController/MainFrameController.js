@@ -11,7 +11,7 @@
  **********************************/
 
 
-app.controller( "mainFrameController", function ( $scope, $timeout, $location, $log, $rootScope, $http, $window, optvModel, osService ) {
+app.controller( "mainFrameController", function ( $scope, $timeout, $location, $log, $rootScope, $http, $window, optvModel, osService, $interval ) {
 
         console.log( "Loading mainFrameController" );
         $log.info( "osService SERVICE: " + osService.name );
@@ -22,6 +22,14 @@ app.controller( "mainFrameController", function ( $scope, $timeout, $location, $
 
         $scope.clientApps = osService.runningApps;
         $scope.runningApps = [];
+        $scope.ui = { hidemax: true };
+
+        $interval( function(){
+            $scope.ui.hidemax = false;
+            $timeout( function(){
+                $scope.ui.hidemax = true;
+            }, 5000);
+            }, 20000);
 
         var logLead = "MFController: ";
 
