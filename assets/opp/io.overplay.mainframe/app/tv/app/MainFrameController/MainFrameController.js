@@ -21,6 +21,7 @@ app.controller( "mainFrameController", function ( $scope, $timeout, $location, $
         $scope.os = osService;
 
         $scope.clientApps = osService.runningApps;
+        $scope.runningApps = [];
 
         var logLead = "MFController: ";
 
@@ -102,9 +103,9 @@ app.controller( "mainFrameController", function ( $scope, $timeout, $location, $
             if ( m.message && m.message.layout ) {
 
                 $log.info( logLead + "received LAYOUT message" );
-                osService.getAppMap()
-                    .then( function ( apps ) {
-                        $scope.clientApps = osService.runningApps;
+                osService.getApps()
+                    .then( function ( data ) {
+                        $scope.runningApps = data.data;
                     }, function ( err ) {
                         $log.error( logLead + " error fetching AppMap. Error: "+ angular.toJson(err) );
                     } );
@@ -178,9 +179,10 @@ app.controller( "mainFrameController", function ( $scope, $timeout, $location, $
             showAppPicker(true);
         }
 
+        //CATCH specifically not used for older JS
         osService.getLauncher()
-            .then( setLauncher )
-            .catch( function ( err ) {
+            .then( setLauncher,
+            function ( err ) {
                 $log.error( "MFController: major error, no app launcher!! " + err );
             } );
 

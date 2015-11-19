@@ -7,71 +7,46 @@ app.controller("dsConController",
 
                    $log.info("Loading dsConController");
 
-                   $scope.ui = {show: false};
+                    var logLead = "DS Control App: ";
+                   $scope.inboundMessageArray = [];
+                   $scope.messageArray = [];
+                   var loaded = false;
 
-                   function ready() {
-                       $scope.ui.show = true;
+                   function modelUpdate( data ) {
+
+                       if ( !loaded ) {
+                           $log.info( logLead + " got a model update: " + angular.toJson( data ) );
+                           $scope.messageArray = data.messages;
+                           loaded = true;
+
+                       }
+
+
                    }
 
-                   function dataChanged(data) {
-
+                   function inboundMessage( msg ) {
+                       $log.debug( logLead + "Inbound message..." );
                    }
-
-                   function inboundMessage(data) {
-                       $log.info("ShuffleCon: got inbound message.");
-                   }
-
-                   $scope.redScore = function () { return optvModel.model.red; }
-                   $scope.blueScore = function () { return optvModel.model.blue; }
 
                    function initialize() {
 
                        optvModel.init({
-                           appName: "io.overplay.shuffleboard",
-                           initialValue: {red: 0, blue: 0},
-                           dataCallback: dataChanged,
+                           appName: "io.overplay.dailyspecials",
+                           dataCallback: modelUpdate,
                            messageCallback: inboundMessage
                        });
 
                    }
 
-                   $scope.changeBlue = function (by) {
+                    $scope.add = function(){
+                        $scope.messageArray.push($scope.input.newMsg);
+                        optvModel.messages = $scope.messageArray;
+                        optvModel.save();
+                    }
 
-                       optvModel.model.blue = optvModel.model.blue + by;
-                       if (optvModel.model.blue < 0) optvModel.model.blue = 0;
-                       optvModel.save();
-
-                   }
-
-                   $scope.changeRed = function (by) {
-                       optvModel.model.red = optvModel.model.red + by;
-                       if (optvModel.model.red < 0) optvModel.model.red = 0;
-                       optvModel.save();
-
-                   }
-
-
-                   $scope.resetScores = function () {
-                       optvModel.model.red = 0;
-                       optvModel.model.blue = 0;
-                       optvModel.save();
-
-                   }
-
-                   $scope.home = function () {
-
-                       optvModel.postMessage({to: "io.overplay.mainframe", data: {dash: 'toggle'}});
-
-                   }
-
-                   $scope.move = function () {
-
-                       optvModel.postMessage({
-                           to: "io.overplay.mainframe",
-                           data: {move: {spot: "next", app: "io.overplay.shuffleboard"}}
-                       });
-
-                   }
+                    $scope.save = function(){
+                        optvModel.save();
+                    }
 
 
                    initialize();

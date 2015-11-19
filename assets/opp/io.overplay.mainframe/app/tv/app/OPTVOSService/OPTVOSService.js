@@ -123,6 +123,12 @@ app.factory( 'osService', [ '$log', '$http', '$rootScope', '$window', function (
 
     }
 
+    service.getApps = function () {
+
+        return $http.get('/api/v1/overplayos/running');
+
+    }
+
 
     /**
      * Window sizing an layout functions
@@ -196,7 +202,7 @@ app.factory( 'osService', [ '$log', '$http', '$rootScope', '$window', function (
 
     }
 
-    service.getAppMap();
+    //service.getAppMap();
 
     return service;
 

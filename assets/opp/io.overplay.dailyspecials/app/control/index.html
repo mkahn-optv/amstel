@@ -50,20 +50,15 @@
 
 <h1>Daily Specials</h1>
 
-<div class="ctrl-holder rounded-border">
+  <div class="msg" ng-repeat="msg in messageArray">
+    <input type="text" ng-model="messageArray[$index]"/>
+  </div>
+  <div class="msg">
+    <input type="text" ng-model="input.newMsg" placeholder="New Message"/>
+  </div>
+  <button class="btn btn-success" ng-click="add()">ADD</button>
+  <button class="btn btn-default" ng-click="done()">DONE</button>
 
-</div>
-<div class="ctrl-holder rounded-border">
-
-</div>
-
-
-<div class="ctrl-holder bottom">
-  <div class="sq-button rd2" ng-click="resetScores()"><i class="fa fa-bomb">&nbsp;RESET</i></div>
-  <div class="sq-button bl2" ng-click="move()"><i class="fa fa-arrows"></i>&nbsp;MOVE</div>
-  <div class="sq-button y" ng-click="home()"><i class="fa fa-home"></i>&nbsp;HOME</div>
-
-</div>
 
 
 </body>

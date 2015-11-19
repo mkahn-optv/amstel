@@ -10,18 +10,19 @@ app.controller( "mfConController",
         $scope.apps = [];
 
 
-
         optvModel.init( {
             appName: "io.overplay.mainframe"
         } );
 
 
-        //Get all the apps to show on AppPicker
-        $http.get( '/api/v1/overplayos/appsbystate' )
-            .then( function ( data ) {
-                $scope.apps = data.data;
+        function refresh() {
+            //Get all the apps to show on AppPicker
+            $http.get( '/api/v1/overplayos/appsbystate' )
+                .then( function ( data ) {
+                    $scope.apps = data.data;
 
-            } );
+                } );
+        }
 
 
         $scope.clicked = function ( app ) {
@@ -42,10 +43,28 @@ app.controller( "mfConController",
 
         }
 
-        $scope.cellAction = function(action){
+        $scope.cellAction = function ( action ) {
 
-            $log.info(angular.toJson(action));
+            $log.info( angular.toJson( action ) );
+
+            if ( action.hasOwnProperty( 'launch' ) ) {
+                optvModel.launchApp( action.launch )
+                    .then( refresh )
+            } else if ( action.hasOwnProperty( 'kill' ) ) {
+                optvModel.killApp( action.kill )
+                    .then( refresh )
+            } else if ( action.hasOwnProperty( 'move' ) ) {
+                optvModel.moveApp( action.move )
+                    .then( refresh )
+
+            }
         }
 
+        $scope.controlForApp = function(app){
+
+            return '/opp/'+app.reverseDomainName+'/app/control/index.html';
+        }
+
+        refresh();
 
     } );

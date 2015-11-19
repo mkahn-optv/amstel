@@ -42,9 +42,9 @@
 <!-- array of launched apps -->
 
 <div class="appholder hide-fade" ng-show="!launcher.show">
-    <iframe ng-repeat="app in clientApps" src="{{app.src}}"
+    <iframe ng-repeat="app in runningApps" src="{{app.src}}"
             ng-style="app.location"
-            ng-class="app.app.appType"></iframe>
+            ng-class="app.appType"></iframe>
 </div>
 
 

@@ -19,13 +19,6 @@
  2. Which slots each of these apps are in: Widget 0-3, Crawler 0-1, Fullscreen 0
  3. Nudge percentage of each app
 
- NOTE: This is the THIRD version of this service. Originally, apps were moved between slots in the
- array but this caused the Angular clients to restart the child iframe apps which works fine in a
- modern browser, on decent hardware, but takes all fucking day on the Chumbster.
-
- So...this version will instead leave the apps always running once started, and simply move
- their frames around. YAY for rewrite 3!!
-
  *******************************************************/
 
 var _ = require( 'lodash' );
@@ -34,30 +27,29 @@ var util = require( "util" );
 
 var _runningApps = [];
 
-var _widgetAppMap = [];
-var _crawlerAppMap = [];
-var _fullscreenAppMap = [];
+var _widgetAppMap = [ "", "", "", "" ];
+var _crawlerAppMap = [ "", "" ];
+var _fullscreenAppMap = [ "" ];
 
-var noapp = { app: undefined, frame: { top:0, left:0, width:0, height: 0 } };
-
-// default for 1080x displays
-var _screenRect = { width: 1920, height: 1080 };
-
-
+var noapp = { src: "", nudge: { top: 0, left: 0 }, app: undefined };
 
 //TODO: src is redundant once I put the whole app in here, but it is used throughout the code below.
 var _screenMap = {
 
-    widgetAppMap: [],
-    crawlerAppMap: [],
-    fullscreenAppMap: []
+    widgetAppMap: [
+        { src: "", nudge: { top: 0, left: 0 }, app: undefined },
+        { src: "", nudge: { top: 0, left: 0 }, app: undefined },
+        { src: "", nudge: { top: 0, left: 0 }, app: undefined },
+        { src: "", nudge: { top: 0, left: 0 }, app: undefined }
+    ],
 
-}
+    crawlerAppMap: [
+        { src: "", nudge: { top: 0, left: 0 }, app: undefined },
+        { src: "", nudge: { top: 0, left: 0 }, app: undefined }
+    ],
 
-function setDisplaySize(screenRect){
+    fullscreenAppMap: [ { src: "", app: undefined } ]
 
-    _screenHeight = screenRect.height || 1080;
-    _screenWidth = screenRect.width || 1920;
 }
 
 function signalAppLaunch( app ) {
@@ -120,8 +112,9 @@ function placeAppOnDisplay( app ) {
                 return -1; //No room!
 
             for ( idx = 0; idx < 4; idx++ ) {
-                if ( _screenMap.widgetAppMap[ idx ] == undefined ) {
-                    _screenMap.widgetAppMap[ idx ] = app;
+                if ( _screenMap.widgetAppMap[ idx ].src == "" ) {
+                    _screenMap.widgetAppMap[ idx ].src = app.reverseDomainName;
+                    _screenMap.widgetAppMap[ idx ].app = app;
                     return idx;
                 }
             }
@@ -136,8 +129,9 @@ function placeAppOnDisplay( app ) {
                 return -1; //No room!
 
             for ( idx = 0; idx < 2; idx++ ) {
-                if ( _screenMap.crawlerAppMap[ idx ] == undefined ) {
-                    _screenMap.crawlerAppMap[ idx ] = app;
+                if ( _screenMap.crawlerAppMap[ idx ].src == "" ) {
+                    _screenMap.crawlerAppMap[ idx ].src = app.reverseDomainName;
+                    _screenMap.crawlerAppMap[ idx ].app = app;
                     return idx;
                 }
             }
@@ -151,97 +145,14 @@ function placeAppOnDisplay( app ) {
             if ( numRunningApps( 'fullscreen' ) == 1 )
                 return -1; //No room!
 
-            _screenMap.fullscreenAppMap[ 0 ] = app;
+            _screenMap.fullscreenAppMap[ 0 ].src = app.reverseDomainName;
+            _screenMap.fullscreenAppMap[ 0 ].app = app;
             return 0;
+
 
             break;
 
     }
-
-}
-
-function setIframePositions(){
-
-    //Do the widgets first
-
-    var app;
-
-    for (var widx=0; widx<_screenMap.widgetAppMap.length; widx++){
-
-        app = _screenMap.widgetAppMap[widx];
-        if (!app) continue;
-
-        app.location = { top: 0, left: 0 };
-        sails.log.debug( "OPTVOs laying out widget slot " + widx );
-
-        //TODO implement server side nudge
-        var nudge = { top: 0, left: 0 };
-
-        switch ( widx ) {
-
-            case 0:
-                app.location.top = Math.floor( .05 * _screenRect.height ) + nudge.top + 'px';
-                app.location.left = Math.floor( .03 * _screenRect.width ) + nudge.left + 'px';
-                break;
-
-            case 1:
-                app.location.top = Math.floor( .05 * _screenRect.height ) + nudge.top + 'px';
-                app.location.left = Math.floor( .85 * _screenRect.width ) + nudge.left + 'px';
-                break;
-
-            case 2:
-                app.location.top = Math.floor( .6 * _screenRect.height ) + nudge.top + 'px';
-                app.location.left = Math.floor( .85 * _screenRect.width ) + nudge.left + 'px';
-                break;
-
-            case 3:
-                app.location.top = Math.floor( .6 * _screenRect.height ) + nudge.top + 'px';
-                app.location.left = Math.floor( .03 * _screenRect.width ) + nudge.left + 'px';
-                break;
-
-        }
-
-
-    }
-
-    //Do the crawler next
-    for ( var cidx = 0; cidx < _screenMap.crawlerAppMap.length; cidx++ ) {
-
-        app = _screenMap.crawlerAppMap[ cidx ];
-        if ( !app ) continue;
-
-        app.location = { top: 0, left: 0 };
-        sails.log.debug( "OPTVOs laying out crawler slot " + cidx );
-
-        //TODO implement server side nudge
-        var nudge = { top: 0, left: 0 };
-
-        //TODO this is here to support crawlers < 100% screen width going forward
-        var widthPct = 100;
-
-        //center frame
-        app.location.left = Math.floor( _screenRect.width - _screenRect.width * (widthPct / 100) ) / 2 + 'px';
-
-        switch ( cidx ) {
-
-            case 0:
-                app.location.top = Math.floor( .89 * _screenRect.height ) + nudge.top + 'px';
-                break;
-
-            case 1:
-                app.location.top = Math.floor( 0 * _screenRect.height ) + nudge.top + 'px';
-                break;
-
-        }
-
-    }
-
-    if ( _screenMap.fullscreenAppMap.length>0){
-
-        _screenMap.fullscreenAppMap[0 ].location = { top: 0, left: 0 };
-
-    }
-
 
 }
 
@@ -262,10 +173,8 @@ module.exports = {
                     if ( app ) {
 
                         if ( placeAppOnDisplay( app ) > -1 ) {
-                            app.src = '/opp/'+app.reverseDomainName+'/app/tv/index.html';
-                            _runningApps.push( app );
-                            setIframePositions();
                             signalAppLaunch( app );
+                            _runningApps.push( app );
                             resolve( { message: "Launching: " + appid } );
                         } else {
                             reject( { message: "No room for app: " + appid } );
@@ -302,7 +211,7 @@ module.exports = {
                 newCrawler.push( _screenMap.crawlerAppMap[ 0 ] );
                 _screenMap.crawlerAppMap = newCrawler;
 
-                setIframePositions();
+
                 signalLayoutChange();
                 return target.slotNumber;
 
@@ -310,15 +219,16 @@ module.exports = {
 
             case 'widget':
 
-                var currentSlot = _.findIndex( _screenMap.widgetAppMap, { reverseDomainName: appid } );
+                var currentSlot = _.findIndex( _screenMap.widgetAppMap, { src: appid } );
                 var nextSlot = (currentSlot + 1) % 4;
 
-                if ( _screenMap.widgetAppMap[ nextSlot ] == undefined ) {
+                if ( _screenMap.widgetAppMap[ nextSlot ].src == "" ) {
 
                     //perfect, dump it here.
-                    _screenMap.widgetAppMap[ currentSlot ] = undefined;
-                    _screenMap.widgetAppMap[ nextSlot ] = target;
-                    setIframePositions();
+                    _screenMap.widgetAppMap[ currentSlot ].src = "";
+                    _screenMap.widgetAppMap[ currentSlot ].app = undefined;
+                    _screenMap.widgetAppMap[ nextSlot ].src = target.reverseDomainName;
+                    _screenMap.widgetAppMap[ nextSlot ].app = target;
                     signalLayoutChange();
                     return nextSlot;
 
@@ -330,7 +240,7 @@ module.exports = {
                     _screenMap.widgetAppMap[ 1 ] = _.cloneDeep( newMap[ 0 ] );
                     _screenMap.widgetAppMap[ 2 ] = _.cloneDeep( newMap[ 1 ] );
                     _screenMap.widgetAppMap[ 3 ] = _.cloneDeep( newMap[ 2 ] );
-                    setIframePositions();
+
                     signalLayoutChange();
                     return nextSlot;
                 }
@@ -359,28 +269,26 @@ module.exports = {
                 case 'crawler':
 
                     kidx = _.findIndex( _screenMap.crawlerAppMap, { src: appid } );
-                    _screenMap.crawlerAppMap[ kidx ] = undefined;
+                    _screenMap.crawlerAppMap[ kidx ] = noapp;
                     break;
 
                 case 'widget':
 
                     kidx = _.findIndex( _screenMap.widgetAppMap, { src: appid } );
-                    _screenMap.widgetAppMap[ kidx ] = undefined;
+                    _screenMap.widgetAppMap[ kidx ] = noapp;
                     break;
 
                 case 'fullscreen':
 
                     kidx = _.findIndex( _screenMap.fullscreenAppMap, { src: appid } );
-                    _screenMap.fullscreenAppMap[ kidx ] = undefined;
+                    _screenMap.fullscreenAppMap[ kidx ] = noapp;
                     break;
 
             }
         }
 
-        if ( zombie !== undefined ){
-            setIframePositions();
+        if ( zombie !== undefined )
             signalLayoutChange();
-        }
 
         return zombie !== undefined;
 
@@ -433,18 +341,5 @@ module.exports = {
                 return { running: _runningApps, dormant: availableToRun };
             } )
 
-    },
-
-    hardReset: function() {
-
-        _screenMap = {
-
-            widgetAppMap:     [],
-            crawlerAppMap:    [],
-            fullscreenAppMap: []
-
-        };
-
-        _runningApps = [];
     }
 }

@@ -362,8 +362,13 @@ angular.module( 'ngOpTVApi', [] )
             //Synching must be done before any other init...
             $http.get( '/api/v1/overplayos/ostime' )
                 .then( function ( data ) {
-                    _osTimeDifferential = new Date( data.data.date ).getTime() - new Date().getTime();
+                    var myJson = angular.toJson(data);
+                    $log.debug( logLead()+" got this for time from OS server "+myJson);
+                    var localTime = new Date().getTime();
+                    var osTime = new Date( data.data.msdate );
+                    _osTimeDifferential = osTime - localTime;
                     $log.debug( logLead() + " got new OS time diff of: " + _osTimeDifferential );
+                    $log.debug( logLead() + " my local ms time is: "+ new Date().getTime());
                     initPhase2();
 
                 },
@@ -459,9 +464,11 @@ angular.module( 'ngOpTVApi', [] )
          * Request app be moved between slots
          * @returns {promise that returns slot Id}
          */
-        service.moveApp = function(){
+        service.moveApp = function(appid){
 
-            return $http.post( '/api/v1/overplayos/move?appid='+_appName);
+            //Passing nothing moves the app this API service is attached to
+            appid = appid || _appName;
+            return $http.post( '/api/v1/overplayos/move?appid='+appid);
 
         };
 
@@ -471,7 +478,21 @@ angular.module( 'ngOpTVApi', [] )
          */
         service.launchApp = function (appid) {
 
+            //Passing nothing moves the app this API service is attached to
+            appid = appid || _appName;
             return $http.post( '/api/v1/overplayos/launch?appid=' + appid );
+
+        };
+
+        /**
+         * Request app be killed
+         * @returns {promise}
+         */
+        service.killApp = function ( appid ) {
+
+            //Passing nothing moves the app this API service is attached to
+            appid = appid || _appName;
+            return $http.post( '/api/v1/overplayos/kill?appid=' + appid );
 
         };
 

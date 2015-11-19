@@ -1,7 +1,15 @@
 <div class="app-button">
-   {{ app.name }}
-   <button class="btn btn-sm btn-success" ng-click="action({ launch: app.reverseDomainName })" ng-hide="running">Start</button>
-   <button class="btn btn-sm btn-danger" ng-click="action({ kill: app.reverseDomainName })" ng-show="running">Stop</button>
-   <button class="btn btn-sm btn-primary" ng-click="action({ move: app.reverseDomainName })" ng-show="running">Move</button>
+    <span class="name">{{ app.name }}</span>
+
+    <div class="right">
+        <button class="btn btn-sm btn-success" ng-click="action({ launch: app.reverseDomainName })" ng-hide="running">
+            Start
+        </button>
+        <button class="btn btn-sm btn-danger" ng-click="action({ kill: app.reverseDomainName })" ng-show="running">Stop
+        </button>
+        <button class="btn btn-sm btn-primary" ng-click="action({ move: app.reverseDomainName })" ng-show="running">Move
+        </button>
+
+    </div>
 
 </div>

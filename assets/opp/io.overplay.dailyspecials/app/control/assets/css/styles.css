@@ -31,73 +31,16 @@ h1 {
     padding: 5px;
 }
 
-.img-button {
-    display: inline-block;
-    width: 70px;
-    height: 70px;
-    border-radius: 70px;
-    margin: 1%;
-    text-align: center;
-    line-height: 50px;
-    font-size: 80px;
+
+.msg {
+    width: 100%;
+    padding: 10px;
 }
 
-.sq-button {
-    display: inline-block;
-    width: 33%;
-    height: 50px;
-    border-radius: 5px;
-    margin: 4px;;
-    text-align: center;
-    line-height: 50px;
-    font-size: 15px;
-}
-
-.score-button {
-    display: inline-block;
-    width: 70px;
-    height: 70px;
-    border-radius: 30px;
-    margin: 1%;
-    text-align: center;
-    line-height: 65px;
-    font-size: 50px;
-}
-
-
-.rt {
-    margin-right: 15%;
-}
-
-.lt {
-    margin-left: 15%;
-}
-
-.red-sk {
-    border: 3px solid red;
-    color: white;
-    background-color: red;
-}
-
-.blue-sk {
-    border: 3px solid blue;
-    color: white;
-    background-color: blue;
-}
-
-.rd2 {
-    color: white;
-    background-color: #ea526f;
-}
-
-.bl2 {
-    color: white;
-    background-color: #1b9aaa;
-}
-
-.y {
-    color: white;
-    background-color: #ff9512;
+.msg input {
+    width: 90%;
+    padding: 5px;
+    font-size: 1.0rem;
 }
 
 .ctrl-holder {

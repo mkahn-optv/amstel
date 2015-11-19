@@ -36,7 +36,7 @@
 
 
 <!-- App Specific and Overridden CSS -->
-<link href="assets/css/bootcyb.min.css" rel="stylesheet">
+<link href="assets/css/bootflat.css" rel="stylesheet">
 <link href="assets/css/styles.css" rel="stylesheet">
 <link href="assets/css/font-awesome.min.css" rel="stylesheet">
 <!--<link href="assets/bower_components/bootstrap/dist/css/bootstrap.css" rel="stylesheet">-->
@@ -48,46 +48,61 @@
 <body ng-controller="mfConController">
 
 <!--Shuffleboard Remote Control -->
-
-
 <h1><img src="assets/img/optvlogo100.png">&nbsp;Overplay TV</h1>
-<uib-tabset>
-  <uib-tab heading="Controls">
-  <div class="container">
-    <div class="row gaptop">
-      <div class="col-xs-6">
-        <button class="btn btn-default ud-control-button" ng-click="remote('up')"><i class="fa fa-arrow-up"></i></button>
-        <br>
-        <button class="btn btn-default ud-control-button" ng-click="remote('down')"><i class="fa fa-arrow-down"></i></button>
-        <br>
-      </div>
-      <div class="col-xs-6">
-        <button class="btn btn-default ud-select-button" ng-click="remote('center')">Select</button>
-      </div>
+
+<div class="container-fluid">
+    <div class="row">
+        <div class="col-xs-12">
+            <uib-tabset>
+                <uib-tab heading="Controls">
+                    <div class="container">
+                        <div class="row gaptop">
+                            <div class="col-xs-6">
+                                <button class="btn btn-default ud-control-button" ng-click="remote('up')"><i
+                                        class="fa fa-arrow-up"></i>
+                                </button>
+                                <br>
+                                <button class="btn btn-default ud-control-button" ng-click="remote('down')"><i
+                                        class="fa fa-arrow-down"></i></button>
+                                <br>
+                            </div>
+                            <div class="col-xs-6">
+                                <button class="btn btn-default ud-select-button" ng-click="remote('center')">Select
+                                </button>
+                            </div>
+                        </div>
+                        <div class="row gaptop">
+                            <div class="col-xs-12">
+                                <button class="btn btn-default full-width" ng-click="menu()"><i class="fa fa-bars"></i>&nbsp;Show/Hide
+                                    Main Menu
+                                </button>
+                            </div>
+                        </div>
+                    </div>
+                </uib-tab>
+
+                <uib-tab heading="Apps">
+                    <h4>Running</h4>
+
+                    <p ng-if="apps.running.length == 0">No apps running.</p>
+                    <app-cell ng-repeat="app in apps.running" app="app" running="true" action="cellAction">
+                    </app-cell>
+                    <h4>Dormant</h4>
+                    <app-cell ng-repeat="app in apps.dormant" app="app" action="cellAction">
+                    </app-cell>
+                </uib-tab>
+
+
+                <uib-tab heading="{{ app.name }}" ng-repeat="app in apps.running">
+                    <iframe style="width: 100%; height: 600px;"
+                            src="{{ controlForApp(app) }}"></iframe>
+                </uib-tab>
+
+            </uib-tabset>
+        </div>
+
     </div>
-    <div class="row gaptop">
-      <div class="col-xs-12">
-        <button class="btn btn-default full-width" ng-click="menu()"><i class="fa fa-bars"></i>&nbsp;Show/Hide Main Menu</button>
-      </div>
-    </div>
-  </div>
-  </uib-tab>
-
-  <uib-tab heading="Apps">
-    <h2>Running</h2>
-    <app-cell ng-repeat="app in apps.running" app="app" running="true" action="cellAction">
-    </app-cell>
-    <h2>Dormant</h2>
-    <app-cell ng-repeat="app in apps.dormant" app="app" action="cellAction">
-    </app-cell>
-  </uib-tab>
-
-
-  <uib-tab heading="Shuffleboard">
-    <iframe style="width: 100%; height: 600px;" src="/opkg/io.overplay.shuffleboard/app/control/index.html"></iframe>
-  </uib-tab>
-
-</uib-tabset>
+</div>
 
 
 </body>

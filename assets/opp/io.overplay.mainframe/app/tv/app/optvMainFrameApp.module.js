@@ -10,7 +10,6 @@
 
 
 var app = angular.module('optvMainFrameApp', [
-    'ngRoute',
     'ngAnimate',
     'ngSanitize',
     'ngOpTVApi'

@@ -143,9 +143,11 @@ module.exports = {
 
     ostime: function ( req, res ) {
 
+        var d = new Date();
+
         if ( req.method == "GET" ) {
 
-            res.ok( { date: new Date() } );
+            res.ok( { date: d, msdate: d.getTime() } );
 
         } else {
 
@@ -153,5 +155,20 @@ module.exports = {
 
         }
 
-    }
+    },
+
+    hardreset: function ( req, res ) {
+
+        if ( req.method == "POST" ) {
+
+            OverplayOS.hardReset();
+            res.ok("reset ok");
+
+        } else {
+
+            res.badRequest();
+
+        }
+
+    },
 }
