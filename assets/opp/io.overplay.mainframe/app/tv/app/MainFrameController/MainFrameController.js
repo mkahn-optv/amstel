@@ -22,14 +22,19 @@ app.controller( "mainFrameController", function ( $scope, $timeout, $location, $
 
         $scope.clientApps = osService.runningApps;
         $scope.runningApps = [];
-        $scope.ui = { hidemax: true };
+
+        //New layout technique...
+        $scope.runningAppSrc = [];
+        $scope.runningAppPos = [];
+
+        $scope.ui = { hidemax: true, open: false };
 
         $interval( function(){
             $scope.ui.hidemax = false;
             $timeout( function(){
                 $scope.ui.hidemax = true;
-            }, 5000);
-            }, 20000);
+            }, 3000);
+            }, 45000);
 
         var logLead = "MFController: ";
 
@@ -102,6 +107,13 @@ app.controller( "mainFrameController", function ( $scope, $timeout, $location, $
          { "to":"io.overplay.mainframe", "from":"io.overplay.shuffleboard", "data":{ "move": { "spot" : "tl" }}}
          */
 
+         function mergeApps(inboundData){
+
+            $scope.runningAppSrc = _.pluck(inboundData.data, 'src');
+            $scope.runningAppPos = _.pluck(inboundData.data, 'location');
+
+         }
+
         function inboundMessageMain( m ) {
 
             $log.info( "Mainframe received message: " + angular.toJson( m ) );
@@ -114,6 +126,7 @@ app.controller( "mainFrameController", function ( $scope, $timeout, $location, $
                 osService.getApps()
                     .then( function ( data ) {
                         $scope.runningApps = data.data;
+                        mergeApps(data);
                     }, function ( err ) {
                         $log.error( logLead + " error fetching AppMap. Error: "+ angular.toJson(err) );
                     } );
@@ -195,6 +208,7 @@ app.controller( "mainFrameController", function ( $scope, $timeout, $location, $
             } );
 
 
+        $timeout(function(){ $scope.ui.open = true; }, 3000);
     }
 )
 ;

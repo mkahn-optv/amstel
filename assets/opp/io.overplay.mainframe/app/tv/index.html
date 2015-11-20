@@ -27,6 +27,7 @@
 
   <!-- Controllers -->
   <script src="app/MainFrameController/MainFrameController.js"></script>
+  <script src="app/MainFrameController/StartAnim.directive.js"></script>
 
   <!-- in here in case we need it -->
   <link href="assets/bower_components/angular-toastr/dist/angular-toastr.css" rel="stylesheet">
@@ -41,10 +42,10 @@
 
 <!-- array of launched apps -->
 
-<div class="appholder hide-fade" ng-show="!launcher.show">
-    <iframe ng-repeat="app in runningApps" src="{{app.src}}"
-            ng-style="app.location"
-            ng-class="app.appType"></iframe>
+<div class="appholder hide-fade" ng-show="!launcher.show && ui.open">
+    <iframe ng-repeat="appSrc in runningAppSrc" src="{{ appSrc }}"
+            ng-style="runningAppPos[$index]"
+            ng-class="runningApps[$index].appType"></iframe>
 </div>
 
 
@@ -64,17 +65,18 @@
 
 
 <iframe src="{{launcher.app.src}}"
-        class="launcher-iframe" ng-class="{'launcher-offscreen': !launcher.show}"></iframe>
+        class="launcher-iframe" ng-class="{'launcher-offscreen': !launcher.show}" ng-show="ui.open"></iframe>
 
 <div class="debugbox">{{os.windowDimension.text}}
   <!-- <div class="hdmessage">1080p</div> -->
   <!--<br><button ng-click="buttonPushed('down')">DOWN V</button>-->
 </div>
 
-<div class="popup" ng-class="{ 'outright': ui.hidemax }">
+<div class="popup" ng-class="{ 'outright': ui.hidemax }" ng-show="ui.open">
     <img src="assets/img/max.gif"/>
     <h2>John Z: Your Order's Up!</h2>
 </div>
 
+<start-animation ui="ui"></start-animation>
 </body>
 </html>

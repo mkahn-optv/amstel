@@ -36,6 +36,8 @@ body {
     border: 0;
     width: 200px;
     height: 400px;
+    transition: all 1s;
+    -webkit-transition: all 1s;
 }
 
 .crawler {
@@ -43,6 +45,8 @@ body {
     border: 0;
     width: 100%;
     height: 200px;
+    transition: all 1s;
+    -webkit-transition: all 1s;
 }
 
 .fullscreen {
@@ -128,6 +132,8 @@ body {
     left: 0;
     width: 100%;
     height: 100%;
+    transition: all 0.5s;
+    -webkit-transition: all 0.5s;
 }
 
 .popup {
@@ -155,4 +161,77 @@ body {
     font-family: "Dosis-Bold", monospace;
 }
 
+/* Start Animation */
 
+.animholder {
+    position: fixed;
+    top: 0;
+    left: 0;
+    width: 1920px;
+    height: 1080px;
+    z-index: 1000;
+}
+
+.leftcurtain {
+    position: fixed;
+    top: 0;
+    left: 0;
+    width: 960px;
+    height: 1080px;
+    background-color: #4c5052;
+    transition: all 1s;
+    -webkit-transition: all 1s;
+}
+
+.rightcurtain {
+    position: fixed;
+    top: 0;
+    left: 958px;
+    width: 965px;
+    height: 1080px;
+    background-color: #4c5052;
+    transition: all 1s;
+    -webkit-transition: all 1s;
+}
+
+.animholder h1 {
+    font-size: 5rem;
+    color: whitesmoke;
+    position: absolute;
+    top: 600px;
+    width: 100%;
+    text-align: center;
+    text-transform: uppercase;
+    display: block;
+    transition: all 1s;
+    -webkit-transition: all 1s;
+}
+
+.animholder img {
+
+    position: absolute;
+    top: 300px;
+    height: 200px;
+    left: 900px;
+    display: block;
+    transition: all 1s;
+    -webkit-transition: all 1s;
+}
+
+.openleft {
+    left: -1000px;
+}
+
+.openright {
+    left: 3000px;
+}
+
+.openup {
+    top: -1000px!important;
+}
+
+.opendown {
+    top: 2500px !important;
+    border: 2px solid orangered;
+
+}
