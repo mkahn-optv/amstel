@@ -43,6 +43,10 @@ app.controller( "mfConController",
 
         }
 
+        $scope.debug = function () {
+            optvModel.postMessage( { to: "io.overplay.mainframe", data: { debug: 'toggle' } } );
+        }
+
         $scope.cellAction = function ( action ) {
 
             $log.info( angular.toJson( action ) );

@@ -38,23 +38,22 @@ var _widgetAppMap = [];
 var _crawlerAppMap = [];
 var _fullscreenAppMap = [];
 
-var noapp = { app: undefined, frame: { top:0, left:0, width:0, height: 0 } };
+var noapp = { app: undefined, frame: { top: 0, left: 0, width: 0, height: 0 } };
 
 // default for 1080x displays
 var _screenRect = { width: 1920, height: 1080 };
 
 
-
 //TODO: src is redundant once I put the whole app in here, but it is used throughout the code below.
 var _screenMap = {
 
-    widgetAppMap: [],
-    crawlerAppMap: [],
+    widgetAppMap:     [],
+    crawlerAppMap:    [],
     fullscreenAppMap: []
 
 }
 
-function setDisplaySize(screenRect){
+function setDisplaySize( screenRect ) {
 
     _screenHeight = screenRect.height || 1080;
     _screenWidth = screenRect.width || 1920;
@@ -160,16 +159,16 @@ function placeAppOnDisplay( app ) {
 
 }
 
-function setIframePositions(){
+function setIframePositions() {
 
     //Do the widgets first
 
     var app;
 
-    for (var widx=0; widx<_screenMap.widgetAppMap.length; widx++){
+    for ( var widx = 0; widx < _screenMap.widgetAppMap.length; widx++ ) {
 
-        app = _screenMap.widgetAppMap[widx];
-        if (!app) continue;
+        app = _screenMap.widgetAppMap[ widx ];
+        if ( !app ) continue;
 
         app.location = { top: 0, left: 0 };
         sails.log.debug( "OPTVOs laying out widget slot " + widx );
@@ -236,9 +235,9 @@ function setIframePositions(){
 
     }
 
-    if ( _screenMap.fullscreenAppMap.length>0){
+    if ( _screenMap.fullscreenAppMap.length > 0 ) {
 
-        _screenMap.fullscreenAppMap[0 ].location = { top: 0, left: 0 };
+        _screenMap.fullscreenAppMap[ 0 ].location = { top: 0, left: 0 };
 
     }
 
@@ -262,7 +261,7 @@ module.exports = {
                     if ( app ) {
 
                         if ( placeAppOnDisplay( app ) > -1 ) {
-                            app.src = '/opp/'+app.reverseDomainName+'/app/tv/index.html';
+                            app.src = '/opp/' + app.reverseDomainName + '/app/tv/index.html';
                             _runningApps.push( app );
                             setIframePositions();
                             signalAppLaunch( app );
@@ -358,26 +357,26 @@ module.exports = {
 
                 case 'crawler':
 
-                    kidx = _.findIndex( _screenMap.crawlerAppMap, { src: appid } );
+                    kidx = _.findIndex( _screenMap.crawlerAppMap, { reverseDomainName: appid } );
                     _screenMap.crawlerAppMap[ kidx ] = undefined;
                     break;
 
                 case 'widget':
 
-                    kidx = _.findIndex( _screenMap.widgetAppMap, { src: appid } );
+                    kidx = _.findIndex( _screenMap.widgetAppMap, { reverseDomainName: appid } );
                     _screenMap.widgetAppMap[ kidx ] = undefined;
                     break;
 
                 case 'fullscreen':
 
-                    kidx = _.findIndex( _screenMap.fullscreenAppMap, { src: appid } );
+                    kidx = _.findIndex( _screenMap.fullscreenAppMap, { reverseDomainName: appid } );
                     _screenMap.fullscreenAppMap[ kidx ] = undefined;
                     break;
 
             }
         }
 
-        if ( zombie !== undefined ){
+        if ( zombie !== undefined ) {
             setIframePositions();
             signalLayoutChange();
         }
@@ -435,7 +434,7 @@ module.exports = {
 
     },
 
-    hardReset: function() {
+    hardReset: function () {
 
         _screenMap = {
 
@@ -446,5 +445,32 @@ module.exports = {
         };
 
         _runningApps = [];
+    },
+
+    getIPAddress: function () {
+
+        var os = require( 'os' );
+        var util = require( 'util' );
+        var ifaces = os.networkInterfaces();
+
+        var rval = [];
+
+        Object.keys( ifaces ).forEach( function ( ifname ) {
+
+            var alias = 0;
+
+            ifaces[ ifname ].forEach( function ( iface ) {
+
+                if ( iface.family == 'IPv4' && !iface.internal ) {
+
+                    rval.push( iface );
+
+                }
+
+            } );
+        } );
+
+        return rval;
+
     }
 }

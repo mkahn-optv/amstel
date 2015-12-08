@@ -31,7 +31,6 @@ h1 {
     padding: 5px;
 }
 
-
 .msg {
     width: 100%;
     padding: 10px;
@@ -42,6 +41,7 @@ h1 {
     padding: 5px;
     font-size: 1.0rem;
 }
+
 
 .ctrl-holder {
 
@@ -62,4 +62,17 @@ h1 {
     left: 0;
     bottom: 50px;
     width: 95%;
+}
+
+.msgnum {
+    background-color: #404040;
+    color: #ffffff;
+    border-radius: 5px;
+    font-size: 14px;
+    font-weight: bold;
+    float: left;
+    width: 30px;
+    height: 25px;
+    text-align: center;
+    line-height: 25px;
 }

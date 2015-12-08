@@ -67,7 +67,7 @@
 <iframe src="{{launcher.app.src}}"
         class="launcher-iframe" ng-class="{'launcher-offscreen': !launcher.show}" ng-show="ui.open"></iframe>
 
-<div class="debugbox">{{os.windowDimension.text}}
+<div class="debugbox" ng-show="ui.debug">{{os.windowDimension.text}}
   <!-- <div class="hdmessage">1080p</div> -->
   <!--<br><button ng-click="buttonPushed('down')">DOWN V</button>-->
 </div>

@@ -171,4 +171,11 @@ module.exports = {
         }
 
     },
+
+    ipaddress: function (req, res ){
+
+        res.ok( OverplayOS.getIPAddress());
+
+
+    }
 }

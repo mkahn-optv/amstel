@@ -27,7 +27,7 @@ app.controller( "mainFrameController", function ( $scope, $timeout, $location, $
         $scope.runningAppSrc = [];
         $scope.runningAppPos = [];
 
-        $scope.ui = { hidemax: true, open: false };
+        $scope.ui = { hidemax: true, open: false, debug: false };
 
         $interval( function(){
             $scope.ui.hidemax = false;
@@ -140,7 +140,6 @@ app.controller( "mainFrameController", function ( $scope, $timeout, $location, $
             }
 
 
-            //TODO this is all kind of bullshot with the new app holder frame.
             //Show Dash
             if ( m.message && m.message.dash ) {
 
@@ -159,6 +158,18 @@ app.controller( "mainFrameController", function ( $scope, $timeout, $location, $
                     case 'toggle':
                         //TODO sequencing
                         toggleAppPicker();
+                        break;
+
+                }
+            }
+
+            //Show Dash
+            if ( m.message && m.message.debug ) {
+
+                switch ( m.message.debug ) {
+
+                    case 'toggle':
+                        $scope.ui.debug = !$scope.ui.debug;
                         break;
 
                 }

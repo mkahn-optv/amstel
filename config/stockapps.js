@@ -27,6 +27,16 @@ module.exports.stockapps = {
             size: { width: 25, height: 40 }
         },
         {
+            name:              "Bud Board",
+            appType:           "crawler",
+            reverseDomainName: "io.overplay.budboard",
+            buildNumber:       1,
+            onLauncher:        true,
+            iconLauncher:      'budboard16x9.png',
+            publisher:         "overplay.io",
+            size:              { "width": 100, "height": 10 }
+        },
+        {
             name: "Daily Specials",
             appType: "crawler",
             reverseDomainName: "io.overplay.dailyspecials",

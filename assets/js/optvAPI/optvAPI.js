@@ -67,6 +67,11 @@ angular.module( 'ngOpTVApi', [] )
         function setInitialAppDataValueHTTP() {
 
             service.model = _initialValue;
+
+            //Don't post up an undefined. We are probably in an app that doesn't set defaults.
+            if (!_initialValue)
+                return;
+
             $http.post( '/api/v1/appdata', {
                 appName: _appName,
                 data:    _initialValue
@@ -130,15 +135,21 @@ angular.module( 'ngOpTVApi', [] )
 
             function updateIfNewer( data ) {
 
-                $log.info( logLead() + " Checking if inbound data is newer" );
+                //$log.info( logLead() + " Checking if inbound data is newer" );
                 //TODO this isn't work right on chumby
-                if ( true ) { //new Date(data.updatedAt) > _this.lastUpdated) {
+
+                var mtime = new Date( data.modTime );
+                var newer = mtime > _this.lastUpdated;
+
+                if ( newer ) {
+                    _this.lastUpdated = mtime;
                     service.model = data.data;
                     _dataCb( service.model );
                 }
 
             }
 
+            //TODO this should run a query filter on modTime and not do it in code above
             this.poll = function () {
 
                 $timeout( function () {
@@ -169,7 +180,7 @@ angular.module( 'ngOpTVApi', [] )
 
             function updateIfNewer( data ) {
 
-                if ( new Date( data.updatedAt ) > _this.lastUpdated ) {
+                if ( new Date( data.modTime ) > _this.lastUpdated ) {
                     service.model = data.data;
                     _dataCb( service.model );
                 }
@@ -316,8 +327,12 @@ angular.module( 'ngOpTVApi', [] )
                         $http.get( '/api/v1/AppData/model?appName=' + _appName )
                             .then( function ( data ) {
                                 $log.info( logLead() + " model data (appData) already existed via http." );
-                                service.model = data.data.data;
-                                _dbId         = data.data.id;
+                                if (Object.keys( data.data ).length==0){
+                                    setInitialAppDataValueHTTP();
+                                } else {
+                                    service.model = data.data.data;
+                                    _dbId = data.data.id;
+                                }
                             },
                             //Chumby browser doesn't seem to like "catch" in some places.
                             function ( err ) {
@@ -352,7 +367,7 @@ angular.module( 'ngOpTVApi', [] )
             _appName      = params.appName;
             _dataCb       = params.dataCallback;
             _msgCb        = params.messageCallback;
-            _initialValue = params.initialValue || {};
+            _initialValue = params.initialValue || undefined;
             _netMethod    = params.netMethod || DEFAULT_METHOD;
 
             $log.debug( "optvAPI init for app: " + _appName );

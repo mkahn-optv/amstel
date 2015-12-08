@@ -1,3 +1,12 @@
 <div class="css-scroller-holder">
-  <div class="css-scroller-text" ng-class="{ 'scroll-left': message.scrolling }" >{{message.text}}</div>
+
+    <div class="bar">
+        <div class="text-holder">
+            <!--<div class="css-scroller-text" ng-class="{ 'scroll-left': message.scrolling }">{{message.text}}</div>-->
+            <div class="css-scroller-text" ng-style="{ 'left': message.leftPos }">{{message.text}}</div>
+        </div>
+
+    </div>
+    <img src="assets/img/oplogoshine.png"/>
+
 </div>

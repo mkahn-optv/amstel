@@ -90,6 +90,8 @@ body {
         width: 100%;
         position: relative;
         margin-bottom: -4px;
+        transition: 0.25s all;
+        -webkit-transition: 0.25s all;
 
     }
 
@@ -111,10 +113,20 @@ body {
     / / padding : 2 px;
         position: relative;
         left: 10px;
+        transition: 0.25s all;
+        -webkit-transition: 0.25s all;
+    }
+
+    .selected img {
+        border-bottom: 3px solid #3a3a3a;
+        transition: 0.25s all;
+        -webkit-transition: 0.25s all;
     }
 
     .not-selected {
         mborder: 3px solid transparent;
+        transition: 0.25s all;
+        -webkit-transition: 0.25s all;
 
     }
 

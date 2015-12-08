@@ -1,0 +1,11 @@
+{
+  "appType": "partial",
+  "name": "Big Game Pool",
+  "reverseDomainName": "io.overplay.squares",
+  "buildNumber": 1,
+  "signature": "",
+  "iconLabel": "Big Game",
+  "iconImageLarge": "football16x9.png",
+  "publisher": "Overplay TV, Inc.",
+  "show": true
+}

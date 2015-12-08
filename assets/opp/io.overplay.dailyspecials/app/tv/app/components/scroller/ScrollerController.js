@@ -74,9 +74,12 @@ app.directive( 'marqueeScroller', [
         } ]
 );
 
+/**
+ * Chumby does a shittly job of CSS transition scrolling, so we do it manually
+ */
 app.directive( 'cssScroller', [
-        '$log', '$timeout',
-        function ( $log, $timeout ) {
+        '$log', '$timeout', '$window',
+        function ( $log, $timeout, $window ) {
             return {
                 restrict:    'E',
                 scope:       {
@@ -86,26 +89,51 @@ app.directive( 'cssScroller', [
                 link:        function ( scope, elem, attrs ) {
                     "use strict";
                     var idx = 0;
+                    var leftPixel = $window.innerWidth + 20;
+                    var messageWidth = 0;
+                    var PIXELS_PER_FRAME = 5;
+                    var FPS = 24;
 
-                    scope.message = { text: "", scrolling: false };
+                    scope.message = { text: "", leftPos: leftPixel + 'px' };
+
                     scope.message.text = scope.messageArray[ idx ];
 
 
+                    function setLeftPos() {
+                        scope.message.leftPos = leftPixel + 'px';
+                        //$log.info( "LEFT POS: " + scope.message.leftPos );
+
+                    }
+
                     function nextMsg() {
+                        $log.info( "NEXT MESSAGE" );
                         idx++;
                         if ( idx == scope.messageArray.length ) idx = 0;
                         scope.message.text = scope.messageArray[ idx ];
-                        scope.message.scrolling = false;
-                        $timeout( scroll, 1000 );
+
+                        messageWidth = scope.message.text.length * 40;
+
+                        //$log.info( "NEXT MESSAGE: " + scope.message.text + " width: " + messageWidth );
+
+                        leftPixel = $window.innerWidth+20;
+                        setLeftPos();
+                        $timeout( scroll, 10 );
                     }
 
 
                     function scroll() {
-                        scope.message.scrolling = true;
-                        $timeout( nextMsg, 10000 );
+                        leftPixel -= PIXELS_PER_FRAME;
+                        setLeftPos();
+                        if ( leftPixel < (-messageWidth) ) {
+                            nextMsg();
+
+                        } else {
+                            $timeout( scroll, 1000/FPS );
+
+                        }
                     }
 
-                    $timeout( scroll, 1000 );
+                    $timeout( nextMsg, 200 );
 
                 }
             }

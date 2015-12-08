@@ -1,0 +1,59 @@
+@font-face {
+    font-family: "Dosis";
+    src: url('../fonts/Dosis-Regular.ttf');
+}
+
+@font-face {
+    font-family: "Dosis-Bold";
+    src: url('../fonts/Dosis-ExtraBold.ttf');
+}
+
+html {
+    margin: 0;
+    aabackground-color: #F000F0;
+
+}
+
+body {
+    margin: 0;
+    aabackground-color: #8ef058;
+    font-family: 'Dosis', sans-serif;
+
+}
+
+h1 {
+    width: 100%;
+    background-color: #001c20;
+    color: white;
+    text-align: center;
+    font-size: 1.5rem;
+    margin-top: 0;
+    padding: 5px;
+}
+
+
+.row {
+    display: block;
+    width: 90%;
+    position: relative;
+    margin: 2px;
+}
+
+.square {
+    width: 8%;
+    border: 1px solid #a9a9a9;
+    height: 20px;
+    display: inline-block;
+    text-align: center;
+
+}
+
+.hdr {
+    width: 8%;
+    height: 20px;
+    display: inline-block;
+    text-align: center;
+    background-color: #51127c;
+    color: white;
+    border: 1px solid white;
+}

@@ -23,8 +23,29 @@ module.exports = {
 
     messageData: {
       type: 'json'
+    },
+
+    modTime: {
+      type: 'integer'
     }
 
+  },
+
+  //These are here because Chumby cannot handle Zulu time
+  beforeCreate: function ( values, next ) {
+
+    values.modTime = new Date().getTime();
+    next();
+
+  },
+
+
+  beforeUpdate: function ( values, next ) {
+
+    values.modTime = new Date().getTime();
+    next();
+
   }
+
 };
 
